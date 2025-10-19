@@ -1,29 +1,17 @@
 import axiosInstance, { ApiErrorResponse } from "@/configs/axios";
 import { AxiosError } from "axios";
+import { IUser } from "@/types";
 
 interface ILoginPayload {
   email: string;
   password: string;
 }
 
-interface IUser {
-  id: string;
-  name: string;
-  email: string;
-  role: string;
-  status: string;
-  profileUrl?: string;
-  createdAt: Date;
-  updatedAt: Date;
-}
-
 interface ILoginResponse {
   success: boolean;
   message: string;
-  data: {
-    accessToken: string;
-    user: IUser;
-  };
+  data: IUser & { accessToken?: string };
+  summary?: unknown;
 }
 
 export const loginUser = async (
@@ -34,7 +22,7 @@ export const loginUser = async (
     return res.data;
   } catch (error) {
     const axiosError = error as AxiosError<ApiErrorResponse>;
-    
+
     if (axiosError.response?.data) {
       // Backend returns structured error response (ApiErrorResponse)
       const errorData = axiosError.response.data;
