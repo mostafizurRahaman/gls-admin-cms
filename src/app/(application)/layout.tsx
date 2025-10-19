@@ -1,3 +1,4 @@
+import Navigation from "@/components/navbar";
 import AuthGuard from "@/components/wrappers/auth-guard";
 
 export default function AuthLayout({
@@ -7,7 +8,10 @@ export default function AuthLayout({
 }>) {
   return (
     <div>
-      <AuthGuard>{children}</AuthGuard>
+      <AuthGuard>
+        <Navigation />
+        {children}
+      </AuthGuard>
     </div>
   );
 }

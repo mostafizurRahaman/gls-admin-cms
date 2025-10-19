@@ -1,8 +1,9 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { poppins } from "@/configs/font";
 import { Toaster } from "sonner";
+import { ThemeProvider } from "@/components/providers/theme-provider";
+import { TanstackQueryProvider } from "@/components/providers/query-provider";
 
 export const metadata: Metadata = {
   title: "Create Next App",
@@ -15,11 +16,19 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
+    <html lang="en" suppressHydrationWarning>
       <body className={`${poppins.variable}  ${poppins.className} antialiased`}>
-        <Toaster />
-      
-        {children}
+        <ThemeProvider
+          attribute="class"
+          defaultTheme="system"
+          enableSystem
+          disableTransitionOnChange
+        >
+          <TanstackQueryProvider>
+            <Toaster />
+            {children}
+          </TanstackQueryProvider>
+        </ThemeProvider>
       </body>
     </html>
   );
