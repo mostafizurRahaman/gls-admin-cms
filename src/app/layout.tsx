@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import "./globals.css";
-import { poppins } from "@/configs/font";
+import { lexend, poppins } from "@/configs/font";
 import { Toaster } from "sonner";
 import { ThemeProvider } from "@/components/providers/theme-provider";
 import { TanstackQueryProvider } from "@/components/providers/query-provider";
@@ -17,7 +17,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <body className={`${poppins.variable}  ${poppins.className} antialiased`}>
+      <body className={`${lexend.variable}  ${lexend.className} antialiased`}>
         <ThemeProvider
           attribute="class"
           defaultTheme="system"

@@ -118,7 +118,9 @@ const EditCategoryDialog = ({
       <DialogContent className="max-w-2xl w-full p-6 max-h-[90vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle>
-            <Typography variant="Bold_H4">Edit Category</Typography>
+            <Typography variant="Bold_H4" as="span">
+              Edit Category
+            </Typography>
           </DialogTitle>
         </DialogHeader>
 

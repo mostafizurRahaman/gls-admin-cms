@@ -1,4 +1,5 @@
-// src/api/categories/components/actions/swap-order-dialog.tsx
+// src/app/(application)/sliders/components/actions/swap-slider-dialog.tsx
+
 import React, { useState } from "react";
 import { Button } from "@/components/ui/button";
 import {
@@ -15,57 +16,60 @@ import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
 import { useQueryClient } from "@tanstack/react-query";
 import { Typography } from "@/components/typography";
+import { swapSliders } from "@/api/sliders";
 
-interface SwapOrderDialogProps {
+interface SwapSliderDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  categoryId: string;
-  categoryName: string;
+  sliderId: number;
+  sliderTitle: string;
   currentOrder: number;
   onSuccess?: () => void;
 }
 
-const SwapOrderDialog = ({
+const SwapSliderDialog = ({
   open,
   onOpenChange,
-  categoryId,
-  categoryName,
+  sliderId,
+  sliderTitle,
   currentOrder,
   onSuccess,
-}: SwapOrderDialogProps) => {
+}: SwapSliderDialogProps) => {
   const [isLoading, setIsLoading] = useState(false);
-  const [newOrder, setNewOrder] = useState(currentOrder);
+  const [targetSliderId, setTargetSliderId] = useState<number | "">("");
   const queryClient = useQueryClient();
 
   const handleSwap = async () => {
     try {
       setIsLoading(true);
 
-      if (newOrder === currentOrder) {
-        toast.info("Please enter a different order number");
+      if (!targetSliderId) {
+        toast.error("Please enter a target slider ID");
         return;
       }
 
-      // Simulate API call
-      await new Promise((resolve) => setTimeout(resolve, 1000));
+      if (targetSliderId === sliderId) {
+        toast.error("Cannot swap slider with itself");
+        return;
+      }
 
-      // Simulate success response
-      const response = {
-        success: true,
-        message: `Order changed from ${currentOrder} to ${newOrder}`,
-      };
+      const response = await swapSliders({
+        sliderId1: sliderId,
+        sliderId2: targetSliderId,
+      });
 
       if (response.success) {
         toast.success(response.message);
-        queryClient.invalidateQueries({ queryKey: ["categories"] });
+        queryClient.invalidateQueries({ queryKey: ["sliders"] });
         onOpenChange(false);
+        setTargetSliderId("");
         onSuccess?.();
       } else {
-        toast.error("Failed to swap order");
+        toast.error(response.message || "Failed to swap sliders");
       }
     } catch (error) {
-      console.error("Swap order failed:", error);
-      toast.error("Failed to swap order. Please try again.");
+      console.error("Swap sliders failed:", error);
+      toast.error("Failed to swap sliders. Please try again.");
     } finally {
       setIsLoading(false);
     }
@@ -77,7 +81,7 @@ const SwapOrderDialog = ({
         <DialogHeader>
           <DialogTitle>
             <Typography variant="Bold_H4" as="span">
-              Change Sort Order
+              Swap Slider Order
             </Typography>
           </DialogTitle>
           <DialogDescription>
@@ -86,8 +90,9 @@ const SwapOrderDialog = ({
               className="text-muted-foreground"
               as="span"
             >
-              Change the sort order for{" "}
-              <span className="text-primary font-medium">{categoryName}</span>
+              Swap the order of{" "}
+              <span className="text-primary font-medium">{sliderTitle}</span>{" "}
+              with another slider
             </Typography>
           </DialogDescription>
         </DialogHeader>
@@ -106,24 +111,29 @@ const SwapOrderDialog = ({
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="newOrder">
-              <Typography variant="Medium_H6">New Order *</Typography>
+            <Label htmlFor="targetSliderId">
+              <Typography variant="Medium_H6">Target Slider ID *</Typography>
             </Label>
             <Input
-              id="newOrder"
+              id="targetSliderId"
               type="number"
-              value={newOrder}
-              onChange={(e) => setNewOrder(Number(e.target.value))}
-              placeholder="Enter new order"
+              value={targetSliderId}
+              onChange={(e) =>
+                setTargetSliderId(e.target.value ? Number(e.target.value) : "")
+              }
+              placeholder="Enter slider ID to swap with"
               min="1"
               required
             />
+            <Typography variant="Regular_H7" className="text-muted-foreground">
+              Enter the ID of the slider you want to swap order with
+            </Typography>
           </div>
         </div>
 
         <DialogFooter className="flex flex-row justify-end gap-2">
           <DialogClose asChild>
-            <Button variant="outline" type="button">
+            <Button variant="outline" type="button" disabled={isLoading}>
               <Typography variant="Medium_H6">Cancel</Typography>
             </Button>
           </DialogClose>
@@ -133,7 +143,9 @@ const SwapOrderDialog = ({
             type="button"
             disabled={isLoading}
           >
-            <Typography variant="Medium_H6">Change Order</Typography>
+            <Typography variant="Medium_H6">
+              {isLoading ? "Swapping..." : "Swap Order"}
+            </Typography>
           </Button>
         </DialogFooter>
       </DialogContent>
@@ -141,4 +153,4 @@ const SwapOrderDialog = ({
   );
 };
 
-export default SwapOrderDialog;
+export default SwapSliderDialog;

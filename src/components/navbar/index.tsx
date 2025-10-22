@@ -42,44 +42,34 @@ const navigationItems: NavItem[] = [
     icon: <LayoutDashboard className="w-4 h-4" />,
   },
   {
-    title: "Products",
+    title: "Sliders",
     icon: <FileText className="w-4 h-4" />,
     subItems: [
       {
-        title: "All Products",
-        href: "/products",
-        description: "View all products",
-      },
-      {
-        title: "Categories",
-        href: "/products/categories",
-        description: "Manage categories",
-      },
-      {
-        title: "Inventory",
-        href: "/products/inventory",
-        description: "Track inventory",
+        title: "All slider",
+        href: "/sliders",
       },
     ],
   },
   {
-    title: "Team",
+    title: "Categories",
     icon: <Users className="w-4 h-4" />,
     subItems: [
       {
-        title: "Members",
-        href: "/team/members",
-        description: "Manage team members",
+        title: "Categories",
+        href: "/categories",
       },
       {
-        title: "Roles",
-        href: "/team/roles",
-        description: "Configure roles",
+        title: "Categories Addons",
+        href: "/categories-addons",
       },
       {
-        title: "Permissions",
-        href: "/team/permissions",
-        description: "Set permissions",
+        title: "Services",
+        href: "/services",
+      },
+      {
+        title: "Services Addons",
+        href: "/services-addons",
       },
     ],
   },

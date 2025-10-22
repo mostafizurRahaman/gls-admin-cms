@@ -1,4 +1,5 @@
-// src/api/categories/components/actions/delete-category-dialog.tsx
+// src/app/(application)/sliders/components/actions/delete-slider-dialog.tsx
+
 import React, { useState } from "react";
 import { Button } from "@/components/ui/button";
 import {
@@ -13,22 +14,23 @@ import {
 import { toast } from "sonner";
 import { useQueryClient } from "@tanstack/react-query";
 import { Typography } from "@/components/typography";
+import { deleteSlider } from "@/api/sliders";
 
-interface DeleteCategoryDialogProps {
+interface DeleteSliderDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  categoryId: string;
-  categoryName: string;
+  sliderId: number;
+  sliderTitle: string;
   onSuccess?: () => void;
 }
 
-const DeleteCategoryDialog = ({
+const DeleteSliderDialog = ({
   open,
   onOpenChange,
-  categoryId,
-  categoryName,
+  sliderId,
+  sliderTitle,
   onSuccess,
-}: DeleteCategoryDialogProps) => {
+}: DeleteSliderDialogProps) => {
   const [isLoading, setIsLoading] = useState(false);
   const queryClient = useQueryClient();
 
@@ -36,26 +38,27 @@ const DeleteCategoryDialog = ({
     try {
       setIsLoading(true);
 
-      // Simulate API call
-      await new Promise((resolve) => setTimeout(resolve, 1000));
-
-      // Simulate success response
-      const response = {
-        success: true,
-        message: "Category deleted successfully",
-      };
+      const response = await deleteSlider(sliderId);
 
       if (response.success) {
         toast.success(response.message);
-        queryClient.invalidateQueries({ queryKey: ["categories"] });
+
+        // Show additional info about normalization
+        if (response.data?.normalized) {
+          toast.info(
+            `${response.data.totalRemaining} sliders remaining and reordered`
+          );
+        }
+
+        queryClient.invalidateQueries({ queryKey: ["sliders"] });
         onOpenChange(false);
         onSuccess?.();
       } else {
-        toast.error("Failed to delete category");
+        toast.error(response.message || "Failed to delete slider");
       }
     } catch (error) {
-      console.error("Delete category failed:", error);
-      toast.error("Failed to delete category. Please try again.");
+      console.error("Delete slider failed:", error);
+      toast.error("Failed to delete slider. Please try again.");
     } finally {
       setIsLoading(false);
     }
@@ -67,7 +70,7 @@ const DeleteCategoryDialog = ({
         <DialogHeader>
           <DialogTitle>
             <Typography variant="Bold_H4" as="span">
-              Delete Category?
+              Delete Slider?
             </Typography>
           </DialogTitle>
           <DialogDescription>
@@ -77,7 +80,7 @@ const DeleteCategoryDialog = ({
               as="span"
             >
               Are you sure you want to delete{" "}
-              <span className="text-primary font-medium">{categoryName}</span>?
+              <span className="text-primary font-medium">{sliderTitle}</span>?
               This action cannot be undone.
             </Typography>
           </DialogDescription>
@@ -85,7 +88,7 @@ const DeleteCategoryDialog = ({
 
         <DialogFooter className="flex flex-row justify-end gap-2">
           <DialogClose asChild>
-            <Button variant="outline" type="button">
+            <Button variant="outline" type="button" disabled={isLoading}>
               <Typography variant="Medium_H6">Cancel</Typography>
             </Button>
           </DialogClose>
@@ -95,7 +98,9 @@ const DeleteCategoryDialog = ({
             type="button"
             disabled={isLoading}
           >
-            <Typography variant="Medium_H6">Delete</Typography>
+            <Typography variant="Medium_H6">
+              {isLoading ? "Deleting..." : "Delete"}
+            </Typography>
           </Button>
         </DialogFooter>
       </DialogContent>
@@ -103,4 +108,4 @@ const DeleteCategoryDialog = ({
   );
 };
 
-export default DeleteCategoryDialog;
+export default DeleteSliderDialog;
