@@ -1,14 +1,23 @@
-// src/api/sliders/swap-sliders.ts
+import axiosInstance from "@/configs/axios";
 
-import axiosInstance, { ApiResponse } from "@/configs/axios";
-import { SwapSlidersRequest, SwapSlidersResponse } from "@/types/sliders";
+export interface SwapSliderResponse {
+  success: boolean;
+  message: string;
+  data?: {
+    swapped: {
+      slider1: { id: number; newOrder: number };
+      slider2: { id: number; newOrder: number };
+    };
+  };
+}
 
-export const swapSliders = async (
-  data: SwapSlidersRequest
-): Promise<ApiResponse<SwapSlidersResponse>> => {
-  const response = await axiosInstance.put<ApiResponse<SwapSlidersResponse>>(
-    "/hr-slider/swap",
-    data
+export const swapSlider = async (id1: number, id2: number) => {
+  const response = await axiosInstance.put<SwapSliderResponse>(
+    "/sliders/swap",
+    {
+      sliderId1: id1,
+      sliderId2: id2,
+    }
   );
   return response.data;
 };

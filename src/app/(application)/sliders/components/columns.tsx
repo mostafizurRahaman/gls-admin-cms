@@ -1,30 +1,123 @@
-// src/app/(application)/sliders/components/columns.tsx
-
-"use client";
-
-import React from "react";
+import { format } from "date-fns";
 import { ColumnDef } from "@tanstack/react-table";
 import { DataTableColumnHeader } from "@/components/data-table/column-header";
-import { Badge } from "@/components/ui/badge";
-import { Typography } from "@/components/typography";
 import { Checkbox } from "@/components/ui/checkbox";
-import { SliderDisplay } from "@/types/sliders";
-import { ActionCell } from "./row-action";
-import { Check, X } from "lucide-react";
-import { formatDateOnly } from "@/lib/format-date";
+import { DataTableRowActions } from "./row-action";
+import { Typography } from "@/components/typography";
+import { Badge } from "@/components/ui/badge";
 import Image from "next/image";
-import { StatusChips } from "@/components/badges/status-switcher";
+
+// Flattened type for export (only primitive types)
+type SliderExportData = {
+  id: number;
+  title: string;
+  subtitle: string | null;
+  buttonText: string | null;
+  buttonUrl: string | null;
+  isActive: boolean;
+  orderNumber: number;
+  imageUrl: string | null;
+  createdAt: string;
+  updatedAt: string;
+};
 
 export const getColumns = (
-  handleRowDeselection: ((rowId: string) => void) | null | undefined,
-  onSuccess?: () => void
-): ColumnDef<SliderDisplay>[] => {
-  const baseColumns: ColumnDef<SliderDisplay>[] = [
-    // ✅ Selection Column
+  handleRowDeselection?: ((rowId: string) => void) | null
+): ColumnDef<SliderExportData>[] => {
+  const baseColumns: ColumnDef<SliderExportData>[] = [
     {
-      id: "select",
-      header: ({ table }) => (
-        <div className="flex items-center justify-center">
+      accessorKey: "imageUrl",
+      header: ({ column }) => (
+        <DataTableColumnHeader column={column} title="Image" />
+      ),
+      cell: ({ row }) => {
+        const imageUrl = row.original.imageUrl;
+        const title = row.original.title;
+        return imageUrl ? (
+          <Image
+            src={imageUrl}
+            alt={title || "Slider image"}
+            width={80}
+            height={45}
+            className="rounded-md object-cover"
+          />
+        ) : (
+          <div className="h-10 w-20 bg-gray-100 rounded-md flex items-center justify-center">
+            <Typography variant="Regular_H7" className="text-gray-400">
+              No Image
+            </Typography>
+          </div>
+        );
+      },
+      enableSorting: false,
+      size: 120,
+    },
+    {
+      accessorKey: "title",
+      header: ({ column }) => (
+        <DataTableColumnHeader column={column} title="Title" />
+      ),
+      cell: ({ row }) => (
+        <Typography variant="Regular_H6">{row.getValue("title")}</Typography>
+      ),
+      size: 250,
+    },
+    {
+      accessorKey: "isActive",
+      header: ({ column }) => (
+        <DataTableColumnHeader column={column} title="Status" />
+      ),
+      cell: ({ row }) => {
+        const isActive = row.getValue("isActive");
+        return (
+          <Badge variant={isActive ? "default" : "secondary"}>
+            {isActive ? "Active" : "Inactive"}
+          </Badge>
+        );
+      },
+      size: 100,
+    },
+    {
+      accessorKey: "orderNumber",
+      header: ({ column }) => (
+        <DataTableColumnHeader column={column} title="Order" />
+      ),
+      cell: ({ row }) => (
+        <Typography variant="Regular_H6">
+          {row.getValue("orderNumber")}
+        </Typography>
+      ),
+      size: 80,
+    },
+    {
+      accessorKey: "createdAt",
+      header: ({ column }) => (
+        <DataTableColumnHeader column={column} title="Created At" />
+      ),
+      cell: ({ row }) => {
+        const date = new Date(row.getValue("createdAt"));
+        return (
+          <Typography variant="Regular_H7">
+            {format(date, "MMM d, yyyy")}
+          </Typography>
+        );
+      },
+      size: 150,
+    },
+    {
+      id: "actions",
+      cell: ({ row, table }) => <DataTableRowActions row={row} table={table} />,
+      enableSorting: false,
+      enableHiding: false,
+      size: 80,
+    },
+  ];
+
+  if (handleRowDeselection) {
+    return [
+      {
+        id: "select",
+        header: ({ table }) => (
           <Checkbox
             checked={
               table.getIsAllPageRowsSelected() ||
@@ -34,240 +127,27 @@ export const getColumns = (
               table.toggleAllPageRowsSelected(!!value)
             }
             aria-label="Select all"
-            className="translate-y-[2px]"
           />
-        </div>
-      ),
-      cell: ({ row }) => (
-        <div className="flex items-center justify-center">
+        ),
+        cell: ({ row }) => (
           <Checkbox
             checked={row.getIsSelected()}
-            onCheckedChange={(value) => row.toggleSelected(!!value)}
+            onCheckedChange={(value) => {
+              row.toggleSelected(!!value);
+              if (!value) {
+                handleRowDeselection(row.id);
+              }
+            }}
             aria-label="Select row"
-            className="translate-y-[2px]"
-            onClick={(e) => e.stopPropagation()}
           />
-        </div>
-      ),
-      enableSorting: false,
-      enableHiding: false,
-      size: 50,
-    },
-    {
-      accessorKey: "title",
-      header: ({ column }) => (
-        <DataTableColumnHeader column={column} title="Title" />
-      ),
-      cell: ({ row }) => (
-        <div className="text-left max-w-xs">
-          <Typography variant="Medium_H6" className="text-foreground">
-            {row.getValue("title")}
-          </Typography>
-        </div>
-      ),
-      size: 250,
-    },
-    {
-      accessorKey: "imageUrl",
-      header: ({ column }) => (
-        <DataTableColumnHeader column={column} title="Image" />
-      ),
-      cell: ({ row }) => {
-        const imageUrl = row.getValue("imageUrl") as string;
-        return (
-          <div className="flex justify-center items-center">
-            <div className="relative w-8 h-8 rounded-full  overflow-hidden bg-muted">
-              <Image
-                src={imageUrl}
-                alt={row.original.title}
-                fill
-                className="object-cover"
-                onError={(e) => {
-                  const target = e.target as HTMLImageElement;
-                  target.src = "/placeholder-image.png";
-                }}
-              />
-            </div>
-          </div>
-        );
+        ),
+        enableSorting: false,
+        enableHiding: false,
+        size: 50,
       },
-      size: 100,
-      enableSorting: false,
-    },
-
-    {
-      accessorKey: "subtitle",
-      header: ({ column }) => (
-        <DataTableColumnHeader column={column} title="Subtitle" />
-      ),
-      cell: ({ row }) => {
-        const subtitle = row.getValue("subtitle") as string | null;
-        return (
-          <div className="text-left max-w-sm">
-            <Typography
-              variant="Regular_H7"
-              className="text-foreground truncate"
-            >
-              {subtitle || "—"}
-            </Typography>
-          </div>
-        );
-      },
-      size: 300,
-      enableSorting: false,
-    },
-    {
-      accessorKey: "orderNumber",
-      header: ({ column }) => (
-        <DataTableColumnHeader column={column} title="Order" />
-      ),
-      cell: ({ row }) => (
-        <div className="text-center">
-          <Badge variant="outline" className="font-mono">
-            <Typography variant="Medium_H6">
-              {row.getValue("orderNumber")}
-            </Typography>
-          </Badge>
-        </div>
-      ),
-      size: 80,
-    },
-    {
-      accessorKey: "buttonText",
-      header: ({ column }) => (
-        <DataTableColumnHeader column={column} title="Button" />
-      ),
-      cell: ({ row }) => {
-        const buttonText = row.getValue("buttonText") as string | null;
-        const buttonUrl = row.original.buttonUrl;
-
-        if (!buttonText && !buttonUrl) {
-          return (
-            <div className="text-center text-foreground">
-              <Typography variant="Regular_H7" className=" ">
-                —
-              </Typography>
-            </div>
-          );
-        }
-
-        return (
-          <div className="text-left">
-            <Typography variant="Regular_H7" className="text-foreground">
-              {buttonText || "—"}
-            </Typography>
-          </div>
-        );
-      },
-      size: 200,
-      enableSorting: false,
-    },
-    {
-      accessorKey: "buttonUrl",
-      header: ({ column }) => (
-        <DataTableColumnHeader column={column} title="Button URL" />
-      ),
-      cell: ({ row }) => {
-        const buttonUrl = row.original.buttonUrl;
-
-        if (buttonUrl) {
-          return (
-            <div className="text-left text-foreground">
-              <Typography variant="Regular_H7" className=" ">
-                —
-              </Typography>
-            </div>
-          );
-        }
-
-        return (
-          <div className="text-left">
-            <Typography variant="Regular_H7" className="text-foreground">
-              {buttonUrl || "—"}
-            </Typography>
-          </div>
-        );
-      },
-      size: 200,
-      enableSorting: false,
-    },
-    {
-      accessorKey: "isActive",
-      header: ({ column }) => (
-        <DataTableColumnHeader column={column} title="Status" />
-      ),
-      cell: ({ row }) => {
-        const isActive = row.getValue("isActive") as boolean;
-        return (
-          <div className="flex justify-center">
-            <StatusChips status={!isActive ? "active" : "inactive"} />
-          </div>
-        );
-      },
-      size: 100,
-    },
-    {
-      accessorKey: "createdAt",
-      header: ({ column }) => (
-        <DataTableColumnHeader column={column} title="Created At" />
-      ),
-      cell: ({ row }) => {
-        const createdAt = row.getValue("createdAt") as string;
-        return (
-          <div className="text-left">
-            <Typography variant="Regular_H7" className=" ">
-              {formatDateOnly(createdAt, "UTC")}
-            </Typography>
-          </div>
-        );
-      },
-      size: 120,
-    },
-    {
-      accessorKey: "createdByUser",
-      header: ({ column }) => (
-        <DataTableColumnHeader column={column} title="Created By" />
-      ),
-      cell: ({ row }) => {
-        const createdByUser = row.getValue("createdByUser") as {
-          name: string;
-          email: string;
-        } | null;
-
-        if (!createdByUser) {
-          return (
-            <Typography variant="Regular_H7" className=" ">
-              —
-            </Typography>
-          );
-        }
-
-        return (
-          <div className="text-left">
-            <Typography variant="Regular_H7" className="text-foreground">
-              {createdByUser.name}
-            </Typography>
-            <Typography variant="Regular_H7" className="  truncate max-w-xs">
-              {createdByUser.email}
-            </Typography>
-          </div>
-        );
-      },
-      size: 180,
-      enableSorting: false,
-    },
-    {
-      id: "actions",
-      header: ({ column }) => (
-        <DataTableColumnHeader column={column} title="Actions" />
-      ),
-      cell: ({ row }) => {
-        return <ActionCell slider={row.original} onSuccess={onSuccess} />;
-      },
-      size: 80,
-      enableSorting: false,
-    },
-  ];
+      ...baseColumns,
+    ];
+  }
 
   return baseColumns;
 };

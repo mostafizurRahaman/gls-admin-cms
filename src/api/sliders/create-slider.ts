@@ -1,13 +1,19 @@
-// src/api/sliders/create-slider.ts
+import axiosInstance from "@/configs/axios";
+import { CreateSliderApiData, Slider } from "@/schema/sliders";
 
-import axiosInstance, { ApiResponse } from "@/configs/axios";
-import { CreateSliderRequest, Slider } from "@/types/sliders";
+export interface CreateSliderResponse {
+  success: boolean;
+  message: string;
+  data?: {
+    newSlider: Slider;
+    allSliders: Slider[];
+    totalCount: number;
+  };
+}
 
-export const createSlider = async (
-  data: CreateSliderRequest
-): Promise<ApiResponse<Slider>> => {
-  const response = await axiosInstance.post<ApiResponse<Slider>>(
-    "/hr-slider/create",
+export const createSlider = async (data: CreateSliderApiData) => {
+  const response = await axiosInstance.post<CreateSliderResponse>(
+    "/sliders/create/",
     data
   );
   return response.data;

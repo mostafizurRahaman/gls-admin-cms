@@ -1,54 +1,42 @@
-// src/api/sliders/get-all-sliders.ts
+import axiosInstance from "@/configs/axios";
+import { GetSlidersParams, GetSlidersResponse } from "@/schema/sliders";
 
-import axiosInstance, { ApiResponse } from "@/configs/axios";
-import { GetAllSlidersParams, GetAllSlidersResponse } from "@/types/sliders";
+export const getAllSliders = async (params?: GetSlidersParams) => {
+  const queryParams: Record<string, string | number | boolean> = {};
 
-/**
- * Fetch all sliders with optional filters
- * @param params - Filter parameters
- * @param params.active_only - Filter by active status (default: true)
- * @param params.sort - Sort order by orderNumber (default: "asc")
- * @param params.limit - Maximum number of sliders to return
- * @param params.offset - Number of sliders to skip (default: 0)
- * @returns Promise with sliders data and pagination info
- */
-export const getAllSliders = async (
-  params?: GetAllSlidersParams
-): Promise<ApiResponse<GetAllSlidersResponse>> => {
-  // Build query parameters
-  const queryParams: Record<string, string | number> = {};
-
-  // Handle active_only parameter
-  if (params?.active_only !== undefined) {
-    queryParams.active_only =
-      typeof params.active_only === "boolean"
-        ? String(params.active_only)
-        : params.active_only;
-  } else {
-    queryParams.active_only = "true"; // Default value
+  if (params?.search) {
+    queryParams.search = params.search;
   }
-
-  // Handle sort parameter
-  if (params?.sort) {
-    queryParams.sort = params.sort;
+  if (params?.from_date) {
+    queryParams.from_date = params.from_date;
   }
-
-  // Handle limit parameter
+  if (params?.to_date) {
+    queryParams.to_date = params.to_date;
+  }
+  if (params?.sort_by) {
+    queryParams.sort_by = params.sort_by;
+  }
+  if (params?.sort_order) {
+    queryParams.sort_order = params.sort_order;
+  }
+  if (params?.page !== undefined) {
+    queryParams.page = params.page;
+  }
   if (params?.limit !== undefined) {
     queryParams.limit = params.limit;
   }
-
-  // Handle offset parameter
-  if (params?.offset !== undefined) {
-    queryParams.offset = params.offset;
-  } else {
-    queryParams.offset = 0; // Default value
+  if (params?.active_only) {
+    queryParams.active_only = params.active_only;
   }
 
-  const response = await axiosInstance.get<ApiResponse<GetAllSlidersResponse>>(
-    "/hr-slider/get-all",
-    { params: queryParams }
+  const response = await axiosInstance.get<GetSlidersResponse>(
+    "/sliders/get-all",
+    {
+      params: queryParams,
+    }
   );
 
   return response.data;
 };
+
+export const getSliders = getAllSliders;

@@ -1,14 +1,19 @@
-// src/api/sliders/update-slider.ts
+import axiosInstance from "@/configs/axios";
+import { UpdateSliderFormData, Slider } from "@/schema/sliders";
 
-import axiosInstance, { ApiResponse } from "@/configs/axios";
-import { UpdateSliderRequest, Slider } from "@/types/sliders";
+export interface UpdateSliderResponse {
+  success: boolean;
+  message: string;
+  data?: {
+    updatedSlider: Slider;
+    allSliders: Slider[];
+    totalCount: number;
+  };
+}
 
-export const updateSlider = async (
-  id: number | string,
-  data: UpdateSliderRequest
-): Promise<ApiResponse<Slider>> => {
-  const response = await axiosInstance.put<ApiResponse<Slider>>(
-    `/hr-slider/edit/${id}`,
+export const updateSlider = async (id: number, data: UpdateSliderFormData) => {
+  const response = await axiosInstance.patch<UpdateSliderResponse>(
+    `/sliders/${id}`,
     data
   );
   return response.data;

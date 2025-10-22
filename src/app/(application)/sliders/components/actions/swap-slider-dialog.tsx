@@ -1,156 +1,194 @@
-// src/app/(application)/sliders/components/actions/swap-slider-dialog.tsx
-
-import React, { useState } from "react";
+import * as React from "react";
+import { useQueryClient } from "@tanstack/react-query";
+import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
   DialogContent,
+  DialogDescription,
+  DialogFooter,
   DialogHeader,
   DialogTitle,
-  DialogFooter,
-  DialogClose,
-  DialogDescription,
 } from "@/components/ui/dialog";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { toast } from "sonner";
-import { useQueryClient } from "@tanstack/react-query";
 import { Typography } from "@/components/typography";
-import { swapSliders } from "@/api/sliders";
+import { swapSlider } from "@/api/sliders";
+import { Slider } from "@/schema/sliders";
+import { useForm } from "react-hook-form";
+import { z } from "zod";
+import { zodResolver } from "@hookform/resolvers/zod";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 interface SwapSliderDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  sliderId: number;
-  sliderTitle: string;
-  currentOrder: number;
+  sliders: Slider[];
   onSuccess?: () => void;
 }
 
-const SwapSliderDialog = ({
+const swapSchema = z.object({
+  slider1: z.string().min(1, "Please select first slider"),
+  slider2: z.string().min(1, "Please select second slider"),
+});
+
+export function SwapSliderDialog({
   open,
   onOpenChange,
-  sliderId,
-  sliderTitle,
-  currentOrder,
+  sliders,
   onSuccess,
-}: SwapSliderDialogProps) => {
-  const [isLoading, setIsLoading] = useState(false);
-  const [targetSliderId, setTargetSliderId] = useState<number | "">("");
+}: SwapSliderDialogProps) {
   const queryClient = useQueryClient();
+  const [isSwapping, setIsSwapping] = React.useState(false);
 
-  const handleSwap = async () => {
-    try {
-      setIsLoading(true);
+  const form = useForm({
+    resolver: zodResolver(swapSchema),
+    defaultValues: {
+      slider1: "",
+      slider2: "",
+    },
+  });
 
-      if (!targetSliderId) {
-        toast.error("Please enter a target slider ID");
-        return;
-      }
-
-      if (targetSliderId === sliderId) {
-        toast.error("Cannot swap slider with itself");
-        return;
-      }
-
-      const response = await swapSliders({
-        sliderId1: sliderId,
-        sliderId2: targetSliderId,
+  React.useEffect(() => {
+    if (open) {
+      form.reset({
+        slider1: "",
+        slider2: "",
       });
+    }
+  }, [open, form]);
 
+  const onSubmit = async (data: z.infer<typeof swapSchema>) => {
+    if (data.slider1 === data.slider2) {
+      toast.error("Please select two different sliders");
+      return;
+    }
+
+    setIsSwapping(true);
+    try {
+      const response = await swapSlider(
+        Number(data.slider1),
+        Number(data.slider2)
+      );
       if (response.success) {
         toast.success(response.message);
         queryClient.invalidateQueries({ queryKey: ["sliders"] });
         onOpenChange(false);
-        setTargetSliderId("");
         onSuccess?.();
       } else {
         toast.error(response.message || "Failed to swap sliders");
       }
     } catch (error) {
-      console.error("Swap sliders failed:", error);
+      console.error("Swap error:", error);
       toast.error("Failed to swap sliders. Please try again.");
     } finally {
-      setIsLoading(false);
+      setIsSwapping(false);
     }
   };
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-md w-full p-6">
+      <DialogContent>
         <DialogHeader>
           <DialogTitle>
-            <Typography variant="Bold_H4" as="span">
-              Swap Slider Order
-            </Typography>
+            <Typography variant="Bold_H4">Swap Sliders</Typography>
           </DialogTitle>
           <DialogDescription>
-            <Typography
-              variant="Regular_H6"
-              className="text-muted-foreground"
-              as="span"
-            >
-              Swap the order of{" "}
-              <span className="text-primary font-medium">{sliderTitle}</span>{" "}
-              with another slider
+            <Typography variant="Regular_H6">
+              Choose two sliders to swap their order.
             </Typography>
           </DialogDescription>
         </DialogHeader>
-
-        <div className="space-y-4 py-4">
-          <div className="space-y-2">
-            <Label htmlFor="currentOrder">
-              <Typography variant="Medium_H6">Current Order</Typography>
-            </Label>
-            <Input
-              id="currentOrder"
-              value={currentOrder}
-              disabled
-              className="bg-muted"
+        <Form {...form}>
+          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+            <FormField
+              control={form.control}
+              name="slider1"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>
+                    <Typography variant="Medium_H6">Slider 1</Typography>
+                  </FormLabel>
+                  <Select
+                    onValueChange={field.onChange}
+                    defaultValue={field.value}
+                  >
+                    <FormControl>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select a slider" />
+                      </SelectTrigger>
+                    </FormControl>
+                    <SelectContent>
+                      {sliders.map((slider) => (
+                        <SelectItem key={slider.id} value={String(slider.id)}>
+                          {slider.orderNumber}. {slider.title}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                  <FormMessage />
+                </FormItem>
+              )}
             />
-          </div>
-
-          <div className="space-y-2">
-            <Label htmlFor="targetSliderId">
-              <Typography variant="Medium_H6">Target Slider ID *</Typography>
-            </Label>
-            <Input
-              id="targetSliderId"
-              type="number"
-              value={targetSliderId}
-              onChange={(e) =>
-                setTargetSliderId(e.target.value ? Number(e.target.value) : "")
-              }
-              placeholder="Enter slider ID to swap with"
-              min="1"
-              required
+            <FormField
+              control={form.control}
+              name="slider2"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>
+                    <Typography variant="Medium_H6">Slider 2</Typography>
+                  </FormLabel>
+                  <Select
+                    onValueChange={field.onChange}
+                    defaultValue={field.value}
+                  >
+                    <FormControl>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select a slider" />
+                      </SelectTrigger>
+                    </FormControl>
+                    <SelectContent>
+                      {sliders.map((slider) => (
+                        <SelectItem key={slider.id} value={String(slider.id)}>
+                          {slider.orderNumber}. {slider.title}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                  <FormMessage />
+                </FormItem>
+              )}
             />
-            <Typography variant="Regular_H7" className="text-muted-foreground">
-              Enter the ID of the slider you want to swap order with
-            </Typography>
-          </div>
-        </div>
-
-        <DialogFooter className="flex flex-row justify-end gap-2">
-          <DialogClose asChild>
-            <Button variant="outline" type="button" disabled={isLoading}>
-              <Typography variant="Medium_H6">Cancel</Typography>
-            </Button>
-          </DialogClose>
-          <Button
-            variant="default"
-            onClick={handleSwap}
-            type="button"
-            disabled={isLoading}
-          >
-            <Typography variant="Medium_H6">
-              {isLoading ? "Swapping..." : "Swap Order"}
-            </Typography>
-          </Button>
-        </DialogFooter>
+            <DialogFooter>
+              <Button
+                variant="outline"
+                type="button"
+                onClick={() => onOpenChange(false)}
+                disabled={isSwapping}
+              >
+                <Typography variant="Medium_H6">Cancel</Typography>
+              </Button>
+              <Button type="submit" disabled={isSwapping}>
+                <Typography variant="Medium_H6">
+                  {isSwapping ? "Swapping..." : "Swap"}
+                </Typography>
+              </Button>
+            </DialogFooter>
+          </form>
+        </Form>
       </DialogContent>
     </Dialog>
   );
-};
-
-export default SwapSliderDialog;
+}

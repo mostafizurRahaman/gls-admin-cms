@@ -1,13 +1,15 @@
-// src/api/sliders/get-slider-by-id.ts
+import axiosInstance from "@/configs/axios";
+import { Slider } from "@/schema/sliders";
 
-import axiosInstance, { ApiResponse } from "@/configs/axios";
-import { Slider } from "@/types/sliders";
+export interface GetSliderByIdResponse {
+  success: boolean;
+  message: string;
+  data: Slider;
+}
 
-export const getSliderById = async (
-  id: number | string
-): Promise<ApiResponse<Slider>> => {
-  const response = await axiosInstance.get<ApiResponse<Slider>>(
-    `/hr-slider/get-by-id/${id}`
+export const getSliderById = async (id: number): Promise<Slider> => {
+  const response = await axiosInstance.get<GetSliderByIdResponse>(
+    `/sliders/${id}`
   );
-  return response.data;
+  return response.data.data;
 };
