@@ -69,9 +69,9 @@ export default function LoginPage() {
         // Store JWT token - based on your API response, the entire user data contains token info
         // We'll need to get the actual access token from your backend or use the id as a placeholder
         // For now, we'll use the user.id as a temporary identifier
-        setAccessToken(res.data.id);
+        setAccessToken(res.data.accessToken!);
         toast.success("Logged in successfully!");
-        router.replace("/dashboard");
+        router.replace("/");
       } else {
         toast.error(res.message || "Login failed");
       }

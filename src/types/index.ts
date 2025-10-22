@@ -8,3 +8,4 @@ export interface IUser {
   createdAt: Date;
   updatedAt: Date;
 }
+export * from "./categories";
