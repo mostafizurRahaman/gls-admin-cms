@@ -29,6 +29,16 @@ export const getColumns = (
 ): ColumnDef<SliderExportData>[] => {
   const baseColumns: ColumnDef<SliderExportData>[] = [
     {
+      accessorKey: "id",
+      header: ({ column }) => (
+        <DataTableColumnHeader column={column} title="ID" />
+      ),
+      cell: ({ row }) => (
+        <Typography variant="Regular_H6">{row.getValue("id")}</Typography>
+      ),
+      size: 100,
+    },
+    {
       accessorKey: "title",
       header: ({ column }) => (
         <DataTableColumnHeader column={column} title="Title" />
@@ -38,20 +48,7 @@ export const getColumns = (
       ),
       size: 250,
     },
-    {
-      accessorKey: "imageUrl",
-      header: ({ column }) => (
-        <DataTableColumnHeader column={column} title="Image" />
-      ),
-      cell: ({ row }) => {
-        // @ts-nocheck
-        const imageUrl = row.original?.image?.url;
-        const title = row.original.title;
-        return <ImageCell imageUrl={imageUrl} title={title} />;
-      },
-      enableSorting: false,
-      size: 120,
-    },
+
     {
       accessorKey: "subtitle",
       header: ({ column }) => (
@@ -95,7 +92,21 @@ export const getColumns = (
         const isActive = row.getValue("isActive");
         return <StatusChips status={isActive ? "active" : "inactive"} />;
       },
-      size: 100,
+      size: 120,
+    },
+    {
+      accessorKey: "imageUrl",
+      header: ({ column }) => (
+        <DataTableColumnHeader column={column} title="Image" />
+      ),
+      cell: ({ row }) => {
+        // @ts-nocheck
+        const imageUrl = row.original?.image?.url;
+        const title = row.original.title;
+        return <ImageCell imageUrl={imageUrl} title={title} />;
+      },
+      enableSorting: false,
+      size: 120,
     },
     {
       accessorKey: "orderNumber",
