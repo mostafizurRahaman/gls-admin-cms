@@ -5,6 +5,11 @@ import { Button } from "@/components/ui/button";
 import { X, Upload, Loader2 } from "lucide-react";
 import { toast } from "sonner";
 import Image from "next/image";
+import {
+  uploadToCloudinaryDirect,
+  validateFile,
+  deleteFromCloudinary,
+} from "@/lib/cloudinary-utils";
 
 // ✅ Fixed interface with folder property
 export interface ImageMetadata {
@@ -24,6 +29,7 @@ interface SingleImageUploadProps {
   disabled?: boolean;
   maxSize?: number; // in bytes
   acceptedFormats?: string[];
+  uploadMethod?: "direct"; // Direct Cloudinary upload using unsigned preset
 }
 
 const SingleImageUpload: React.FC<SingleImageUploadProps> = ({
@@ -44,57 +50,41 @@ const SingleImageUpload: React.FC<SingleImageUploadProps> = ({
     const file = event.target.files?.[0];
     if (!file) return;
 
-    // Validate file type
-    if (!acceptedFormats.includes(file.type)) {
-      toast.error(
-        `Invalid file format. Accepted formats: ${acceptedFormats
-          .map((f) => f.split("/")[1])
-          .join(", ")}`
-      );
-      return;
-    }
+    // Validate file using utility function
+    const validation = validateFile(file, {
+      maxSize,
+      acceptedFormats,
+    });
 
-    // Validate file size
-    if (file.size > maxSize) {
-      toast.error(
-        `File size exceeds ${(maxSize / 1024 / 1024).toFixed(0)}MB limit`
-      );
+    if (!validation.isValid) {
+      toast.error(validation.error || "Invalid file");
       return;
     }
 
     setIsUploading(true);
 
     try {
-      const formData = new FormData();
-      formData.append("file", file);
-      formData.append("folder", folder);
-
-      const response = await fetch("/api/upload", {
-        method: "POST",
-        body: formData,
+      // Direct upload to Cloudinary
+      const result = await uploadToCloudinaryDirect(file, {
+        folder,
+        resourceType: "image",
+        quality: "auto",
       });
 
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.error || "Upload failed");
-      }
-
-      const data = await response.json();
-
-      if (data.success && data.url) {
-        setPreview(data.url);
-        onChange(data.url, {
-          publicId: data.publicId,
+      if (result.success && result.url) {
+        setPreview(result.url);
+        onChange(result.url, {
+          publicId: result.publicId,
           folder: folder,
           altText: file.name,
-          width: data.width,
-          height: data.height,
-          format: data.format,
-          size: file.size,
+          width: result.width,
+          height: result.height,
+          format: result.format,
+          size: result.size,
         });
         toast.success("Image uploaded successfully");
       } else {
-        throw new Error(data.error || "Upload failed");
+        throw new Error(result.error || "Upload failed");
       }
     } catch (error) {
       console.error("Upload error:", error);
@@ -109,7 +99,21 @@ const SingleImageUpload: React.FC<SingleImageUploadProps> = ({
     }
   };
 
-  const handleRemove = () => {
+  const handleRemove = async () => {
+    // If we have a publicId, try to delete from Cloudinary
+    if (value && value.includes("cloudinary.com")) {
+      try {
+        // Extract public ID from URL for deletion
+        const publicId = value.split("/").slice(-2).join("/").split(".")[0];
+        if (publicId) {
+          await deleteFromCloudinary(publicId);
+        }
+      } catch (error) {
+        console.warn("Failed to delete from Cloudinary:", error);
+        // Don't show error to user as the image is still removed from UI
+      }
+    }
+
     setPreview(null);
     onChange(null);
     if (fileInputRef.current) {

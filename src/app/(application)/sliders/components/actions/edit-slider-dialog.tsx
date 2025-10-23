@@ -20,7 +20,6 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { Checkbox } from "@/components/ui/checkbox";
 import { toast } from "sonner";
 import { useQueryClient } from "@tanstack/react-query";
 import { Typography } from "@/components/typography";
@@ -30,7 +29,14 @@ import {
   UpdateSliderFormData,
   Slider,
 } from "@/schema/sliders";
-import SingleImageUpload from "@/components/single-image-uploader";
+import { SingleImageUpload } from "@/components/uploader/single-image-uploader";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 interface EditSliderDialogProps {
   open: boolean;
@@ -197,13 +203,22 @@ export const EditSliderDialog = ({
                     <FormLabel>
                       <Typography variant="Medium_H6">Button URL</Typography>
                     </FormLabel>
-                    <FormControl>
-                      <Input
-                        placeholder="/services"
-                        {...field}
-                        disabled={form.formState.isSubmitting}
-                      />
-                    </FormControl>
+                    <Select
+                      onValueChange={field.onChange}
+                      value={field.value}
+                      disabled={form.formState.isSubmitting}
+                    >
+                      <FormControl>
+                        <SelectTrigger>
+                          <SelectValue placeholder="Select a path" />
+                        </SelectTrigger>
+                      </FormControl>
+                      <SelectContent>
+                        <SelectItem value="/contact-us">/contact-us</SelectItem>
+                        <SelectItem value="/services">/services</SelectItem>
+                        <SelectItem value="/about-us">/about-us</SelectItem>
+                      </SelectContent>
+                    </Select>
                     <FormMessage />
                   </FormItem>
                 )}
@@ -245,20 +260,23 @@ export const EditSliderDialog = ({
                     <FormLabel>
                       <Typography variant="Medium_H6">Status</Typography>
                     </FormLabel>
-                    <div className="flex items-center space-x-2 h-10">
+                    <Select
+                      onValueChange={(value) =>
+                        field.onChange(value === "true")
+                      }
+                      value={String(field.value)}
+                      disabled={form.formState.isSubmitting}
+                    >
                       <FormControl>
-                        <Checkbox
-                          checked={field.value}
-                          onCheckedChange={field.onChange}
-                          disabled={form.formState.isSubmitting}
-                        />
+                        <SelectTrigger>
+                          <SelectValue placeholder="Select status" />
+                        </SelectTrigger>
                       </FormControl>
-                      <FormLabel className="cursor-pointer !mt-0">
-                        <Typography variant="Regular_H6">
-                          Active Slider
-                        </Typography>
-                      </FormLabel>
-                    </div>
+                      <SelectContent>
+                        <SelectItem value="true">Active</SelectItem>
+                        <SelectItem value="false">Inactive</SelectItem>
+                      </SelectContent>
+                    </Select>
                     <FormMessage />
                   </FormItem>
                 )}
@@ -276,7 +294,7 @@ export const EditSliderDialog = ({
                   <FormControl>
                     <SingleImageUpload
                       value={field.value?.url || ""}
-                      onChange={(url, metadata) => {
+                      onImageUpload={(url, metadata) => {
                         if (url) {
                           field.onChange({
                             url,
@@ -295,6 +313,7 @@ export const EditSliderDialog = ({
                       }}
                       folder="app/hero-sliders"
                       disabled={form.formState.isSubmitting}
+                      uploadMethod="cloudinary"
                     />
                   </FormControl>
                   <FormMessage />

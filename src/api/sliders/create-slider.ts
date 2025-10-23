@@ -13,7 +13,7 @@ export interface CreateSliderResponse {
 
 export const createSlider = async (data: CreateSliderApiData) => {
   const response = await axiosInstance.post<CreateSliderResponse>(
-    "/sliders/create/",
+    "/sliders/create",
     data
   );
   return response.data;
