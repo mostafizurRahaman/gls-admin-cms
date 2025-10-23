@@ -5,10 +5,13 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { DataTableRowActions } from "./row-action";
 import { Typography } from "@/components/typography";
 import { Badge } from "@/components/ui/badge";
-import Image from "next/image";
+import { StatusChips } from "@/components/badges/status-switcher";
+import { ImageCell } from "./image-cell";
 
 // Flattened type for export (only primitive types)
 type SliderExportData = {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  [x: string]: any;
   id: number;
   title: string;
   subtitle: string | null;
@@ -26,33 +29,6 @@ export const getColumns = (
 ): ColumnDef<SliderExportData>[] => {
   const baseColumns: ColumnDef<SliderExportData>[] = [
     {
-      accessorKey: "imageUrl",
-      header: ({ column }) => (
-        <DataTableColumnHeader column={column} title="Image" />
-      ),
-      cell: ({ row }) => {
-        const imageUrl = row.original.imageUrl;
-        const title = row.original.title;
-        return imageUrl ? (
-          <Image
-            src={imageUrl}
-            alt={title || "Slider image"}
-            width={80}
-            height={45}
-            className="rounded-md object-cover"
-          />
-        ) : (
-          <div className="h-10 w-20 bg-gray-100 rounded-md flex items-center justify-center">
-            <Typography variant="Regular_H7" className="text-gray-400">
-              No Image
-            </Typography>
-          </div>
-        );
-      },
-      enableSorting: false,
-      size: 120,
-    },
-    {
       accessorKey: "title",
       header: ({ column }) => (
         <DataTableColumnHeader column={column} title="Title" />
@@ -63,17 +39,61 @@ export const getColumns = (
       size: 250,
     },
     {
+      accessorKey: "imageUrl",
+      header: ({ column }) => (
+        <DataTableColumnHeader column={column} title="Image" />
+      ),
+      cell: ({ row }) => {
+        // @ts-nocheck
+        const imageUrl = row.original?.image?.url;
+        const title = row.original.title;
+        return <ImageCell imageUrl={imageUrl} title={title} />;
+      },
+      enableSorting: false,
+      size: 120,
+    },
+    {
+      accessorKey: "subtitle",
+      header: ({ column }) => (
+        <DataTableColumnHeader column={column} title="Subtitle" />
+      ),
+      cell: ({ row }) => (
+        <Typography variant="Regular_H6">{row.getValue("subtitle")}</Typography>
+      ),
+      size: 250,
+    },
+    {
+      accessorKey: "buttonText",
+      header: ({ column }) => (
+        <DataTableColumnHeader column={column} title="Button Text" />
+      ),
+      cell: ({ row }) => (
+        <Typography variant="Regular_H6">
+          {row.getValue("buttonText")}
+        </Typography>
+      ),
+      size: 250,
+    },
+    {
+      accessorKey: "buttonUrl",
+      header: ({ column }) => (
+        <DataTableColumnHeader column={column} title="Button URL" />
+      ),
+      cell: ({ row }) => (
+        <Typography variant="Regular_H6">
+          {row.getValue("buttonUrl")}
+        </Typography>
+      ),
+      size: 250,
+    },
+    {
       accessorKey: "isActive",
       header: ({ column }) => (
         <DataTableColumnHeader column={column} title="Status" />
       ),
       cell: ({ row }) => {
         const isActive = row.getValue("isActive");
-        return (
-          <Badge variant={isActive ? "default" : "secondary"}>
-            {isActive ? "Active" : "Inactive"}
-          </Badge>
-        );
+        return <StatusChips status={isActive ? "active" : "inactive"} />;
       },
       size: 100,
     },
@@ -83,9 +103,11 @@ export const getColumns = (
         <DataTableColumnHeader column={column} title="Order" />
       ),
       cell: ({ row }) => (
-        <Typography variant="Regular_H6">
-          {row.getValue("orderNumber")}
-        </Typography>
+        <Badge variant="outline" className="">
+          <Typography variant="Regular_H6">
+            {row.getValue("orderNumber")}
+          </Typography>
+        </Badge>
       ),
       size: 80,
     },

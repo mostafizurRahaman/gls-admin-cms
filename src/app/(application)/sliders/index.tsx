@@ -19,6 +19,8 @@ type SliderExportData = {
   imageUrl: string | null;
   createdAt: string;
   updatedAt: string;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  [key: string]: any;
 };
 
 export default function SlidersTable() {

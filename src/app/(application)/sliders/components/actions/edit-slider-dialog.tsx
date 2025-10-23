@@ -25,8 +25,8 @@ import { useQueryClient } from "@tanstack/react-query";
 import { Typography } from "@/components/typography";
 import { updateSlider } from "@/api/sliders";
 import {
-  updateSliderSchema,
-  UpdateSliderFormData,
+  editSliderFormSchema,
+  EditSliderFormData,
   Slider,
 } from "@/schema/sliders";
 import { SingleImageUpload } from "@/components/uploader/single-image-uploader";
@@ -53,15 +53,15 @@ export const EditSliderDialog = ({
 }: EditSliderDialogProps) => {
   const queryClient = useQueryClient();
 
-  const form = useForm<UpdateSliderFormData>({
-    resolver: zodResolver(updateSliderSchema),
+  const form = useForm<EditSliderFormData>({
+    resolver: zodResolver(editSliderFormSchema),
     defaultValues: {
       title: slider.title,
       subtitle: slider.subtitle || "",
       image: slider.image
         ? {
             url: slider.image.url,
-            publicId: slider.image.publicId || undefined,
+            publicId: slider.image.publicId,
             folder: slider.image.folder || undefined,
             altText: slider.image.altText || undefined,
             width: slider.image.width || undefined,
@@ -69,7 +69,16 @@ export const EditSliderDialog = ({
             format: slider.image.format || undefined,
             size: slider.image.size || undefined,
           }
-        : undefined,
+        : {
+            url: "",
+            publicId: "",
+            folder: "app/hero-sliders",
+            altText: "",
+            width: undefined,
+            height: undefined,
+            format: undefined,
+            size: undefined,
+          },
       orderNumber: slider.orderNumber,
       buttonUrl: slider.buttonUrl || "",
       buttonText: slider.buttonText || "",
@@ -85,7 +94,7 @@ export const EditSliderDialog = ({
         image: slider.image
           ? {
               url: slider.image.url,
-              publicId: slider.image.publicId || undefined,
+              publicId: slider.image.publicId,
               folder: slider.image.folder || undefined,
               altText: slider.image.altText || undefined,
               width: slider.image.width || undefined,
@@ -93,7 +102,16 @@ export const EditSliderDialog = ({
               format: slider.image.format || undefined,
               size: slider.image.size || undefined,
             }
-          : undefined,
+          : {
+              url: "",
+              publicId: "",
+              folder: "app/hero-sliders",
+              altText: "",
+              width: undefined,
+              height: undefined,
+              format: undefined,
+              size: undefined,
+            },
         orderNumber: slider.orderNumber,
         buttonUrl: slider.buttonUrl || "",
         buttonText: slider.buttonText || "",
@@ -102,9 +120,20 @@ export const EditSliderDialog = ({
     }
   }, [open, slider, form]);
 
-  const onSubmit = async (data: UpdateSliderFormData) => {
+  const onSubmit = async (data: EditSliderFormData) => {
     try {
-      const response = await updateSlider(slider.id, data);
+      // Transform form data to API format
+      const apiData = {
+        title: data.title,
+        subtitle: data.subtitle || "",
+        buttonText: data.buttonText,
+        buttonUrl: data.buttonUrl,
+        image: data.image,
+        isActive: data.isActive ?? true,
+        orderNumber: data.orderNumber,
+      };
+
+      const response = await updateSlider(slider.id, apiData);
 
       if (response.success) {
         toast.success(response.message);
@@ -120,6 +149,13 @@ export const EditSliderDialog = ({
     }
   };
 
+  // Handle form validation errors
+  const onError = (errors: Record<string, unknown>) => {
+    if (errors.image) {
+      toast.error("Image is required for slider update");
+    }
+  };
+
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="w-full p-6 max-h-[90vh] overflow-y-auto !max-w-2xl">
@@ -132,7 +168,10 @@ export const EditSliderDialog = ({
         </DialogHeader>
 
         <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+          <form
+            onSubmit={form.handleSubmit(onSubmit, onError)}
+            className="space-y-6"
+          >
             <FormField
               control={form.control}
               name="title"
@@ -236,14 +275,28 @@ export const EditSliderDialog = ({
                     </FormLabel>
                     <FormControl>
                       <Input
-                        type="number"
-                        placeholder="1"
-                        {...field}
-                        onChange={(e) =>
-                          field.onChange(
-                            e.target.value ? Number(e.target.value) : undefined
-                          )
-                        }
+                        type="text"
+                        placeholder="Enter order number"
+                        defaultValue={field.value || ""}
+                        onChange={(e) => {
+                          const value = e.target.value;
+
+                          // Allow empty string
+                          if (value === "") {
+                            field.onChange(undefined);
+                            return;
+                          }
+
+                          // Only allow digits (no letters, special chars, etc.)
+                          if (/^\d+$/.test(value)) {
+                            const numValue = Number(value);
+                            if (numValue > 0) {
+                              field.onChange(numValue);
+                            }
+                          }
+                          // If input contains non-digits, don't update the field
+                          // This prevents invalid characters from being entered
+                        }}
                         disabled={form.formState.isSubmitting}
                       />
                     </FormControl>
@@ -294,6 +347,7 @@ export const EditSliderDialog = ({
                   <FormControl>
                     <SingleImageUpload
                       value={field.value?.url || ""}
+                      publicId={field.value?.publicId}
                       onImageUpload={(url, metadata) => {
                         if (url) {
                           field.onChange({
@@ -308,7 +362,7 @@ export const EditSliderDialog = ({
                             size: metadata?.size,
                           });
                         } else {
-                          field.onChange(undefined);
+                          field.onChange(null);
                         }
                       }}
                       folder="app/hero-sliders"

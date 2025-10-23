@@ -57,7 +57,16 @@ const CreateSliderDialog = ({
     defaultValues: {
       title: "",
       subtitle: "",
-      image: undefined,
+      image: {
+        url: "",
+        publicId: "",
+        folder: "app/hero-sliders",
+        altText: "",
+        width: undefined,
+        height: undefined,
+        format: undefined,
+        size: undefined,
+      },
       orderNumber: undefined,
       buttonUrl: "",
       buttonText: "",
@@ -67,11 +76,8 @@ const CreateSliderDialog = ({
 
   const onSubmit = async (data: CreateSliderFormData) => {
     try {
-      if (!data.image) {
-        toast.error("Image is required");
-        return;
-      }
-
+      // The schema validation will handle the image requirement
+      // If we get here, the image is valid
       const apiData: CreateSliderApiData = {
         ...data,
         image: data.image,
@@ -94,6 +100,13 @@ const CreateSliderDialog = ({
     }
   };
 
+  // Handle form validation errors
+  const onError = (errors: Record<string, unknown>) => {
+    if (errors.image) {
+      toast.error("Image is required for slider creation");
+    }
+  };
+
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="w-full p-6 max-h-[90vh] overflow-y-auto !max-w-2xl">
@@ -112,7 +125,10 @@ const CreateSliderDialog = ({
         </DialogHeader>
 
         <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+          <form
+            onSubmit={form.handleSubmit(onSubmit, onError)}
+            className="space-y-6"
+          >
             <FormField
               control={form.control}
               name="title"
@@ -283,6 +299,7 @@ const CreateSliderDialog = ({
                   <FormControl>
                     <SingleImageUpload
                       value={field.value?.url || ""}
+                      publicId={field.value?.publicId}
                       onImageUpload={(url, metadata) => {
                         if (url) {
                           field.onChange({
@@ -297,7 +314,7 @@ const CreateSliderDialog = ({
                             size: metadata?.size,
                           });
                         } else {
-                          field.onChange(undefined);
+                          field.onChange(null);
                         }
                       }}
                       folder="app/hero-sliders"

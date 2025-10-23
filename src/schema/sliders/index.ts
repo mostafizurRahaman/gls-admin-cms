@@ -1,30 +1,40 @@
 import { z } from "zod";
 
 // ✅ Image metadata schema for CREATE (required fields as defaults)
-export const imageMetadataCreateSchema = z.object({
-  id: z.string().uuid("Invalid image ID format").optional(),
-  url: z.string().url("Invalid image URL"),
-  publicId: z.string().default(""),
-  folder: z.string().default("app/hero-sliders"),
-  altText: z.string().optional(),
-  width: z.number().int().positive().optional(),
-  height: z.number().int().positive().optional(),
-  format: z.string().optional(),
-  size: z.number().int().positive().optional(),
-});
+export const imageMetadataCreateSchema = z.object(
+  {
+    id: z.string().uuid("Invalid image ID format").optional(),
+    url: z.string().url("Invalid image URL"),
+    publicId: z.string().default(""),
+    folder: z.string().default("app/hero-sliders"),
+    altText: z.string().optional(),
+    width: z.number().int().positive().optional(),
+    height: z.number().int().positive().optional(),
+    format: z.string().optional(),
+    size: z.number().int().positive().optional(),
+  },
+  {
+    message: "Image is required for slider creation",
+  }
+);
 
 // ✅ Image metadata schema for UPDATE (all optional)
-export const imageMetadataUpdateSchema = z.object({
-  id: z.string().uuid("Invalid image ID format").optional(),
-  url: z.string().url("Invalid image URL"),
-  publicId: z.string().optional(),
-  folder: z.string().optional(),
-  altText: z.string().optional(),
-  width: z.number().int().positive().optional(),
-  height: z.number().int().positive().optional(),
-  format: z.string().optional(),
-  size: z.number().int().positive().optional(),
-});
+export const imageMetadataUpdateSchema = z.object(
+  {
+    id: z.string().uuid("Invalid image ID format").optional(),
+    url: z.string().url("Invalid image URL"),
+    publicId: z.string().optional(),
+    folder: z.string().optional(),
+    altText: z.string().optional(),
+    width: z.number().int().positive().optional(),
+    height: z.number().int().positive().optional(),
+    format: z.string().optional(),
+    size: z.number().int().positive().optional(),
+  },
+  {
+    message: "Image is required for slider update",
+  }
+);
 
 // Response image schema
 export const imageSchema = z.object({
@@ -51,9 +61,9 @@ export const userSchema = z.object({
 export const sliderSchema = z.object({
   id: z.number(),
   title: z.string(),
-  subtitle: z.string().nullable(),
-  buttonText: z.string().nullable(),
-  buttonUrl: z.string().nullable(),
+  subtitle: z.string(),
+  buttonText: z.string(),
+  buttonUrl: z.string(),
   isActive: z.boolean(),
   orderNumber: z.number(),
   createdAt: z.string(),
@@ -61,7 +71,7 @@ export const sliderSchema = z.object({
   userId: z.string().nullable(),
   modifiedBy: z.string().nullable(),
   imageId: z.string().nullable(),
-  image: imageSchema.nullable(),
+  image: imageSchema,
   createdByUser: userSchema.nullable(),
   modifiedByUser: userSchema.nullable(),
 });
@@ -79,83 +89,140 @@ export const slidersResponseSchema = z.object({
 });
 
 // Form schema for frontend (image optional for form validation)
-export const createSliderFormSchema = z.object({
-  title: z
-    .string()
-    .min(1, "Title is required")
-    .max(255, "Title too long (max 255 chars)"),
-  subtitle: z.string().max(255, "Subtitle too long (max 255 chars)"),
-  buttonText: z
-    .string()
-    .max(100, "Button text too long (max 100 chars)")
-    .optional(),
-  buttonUrl: z
-    .string()
-    .max(255, "Button URL too long (max 255 chars)")
-    .optional(),
-  image: imageMetadataCreateSchema.optional(),
-  isActive: z.boolean().default(true),
-  orderNumber: z
-    .number()
-    .int("Order number must be integer")
-    .min(1, "Order number must be positive")
-    .optional(),
-});
+export const createSliderFormSchema = z
+  .object({
+    title: z
+      .string()
+      .min(1, "Title is required")
+      .max(255, "Title too long (max 255 chars)"),
+    subtitle: z.string().max(255, "Subtitle too long (max 255 chars)"),
+    buttonText: z
+      .string()
+      .max(100, "Button text too long (max 100 chars)")
+      .optional(),
+    buttonUrl: z
+      .string()
+      .max(255, "Button URL too long (max 255 chars)")
+      .optional(),
+    image: imageMetadataCreateSchema,
+    isActive: z.boolean().default(true),
+    orderNumber: z
+      .number()
+      .int("Order number must be integer")
+      .min(1, "Order number must be positive")
+      .optional(),
+  })
+  .refine((data) => data.image.url, {
+    message: "Image is required for slider",
+    path: ["image"],
+  });
 
 // API schema for backend (image required)
-export const createSliderSchema = z.object({
-  title: z
-    .string()
-    .min(1, "Title is required")
-    .max(255, "Title too long (max 255 chars)"),
-  subtitle: z.string().max(255, "Subtitle too long (max 255 chars)"),
-  buttonText: z
-    .string()
-    .max(100, "Button text too long (max 100 chars)")
-    .optional(),
-  buttonUrl: z
-    .string()
-    .max(255, "Button URL too long (max 255 chars)")
-    .optional(),
-  image: imageMetadataCreateSchema,
-  isActive: z.boolean().default(true),
-  orderNumber: z
-    .number()
-    .int("Order number must be integer")
-    .min(1, "Order number must be positive")
-    .optional(),
-});
+export const createSliderSchema = z
+  .object({
+    title: z
+      .string()
+      .min(1, "Title is required")
+      .max(255, "Title too long (max 255 chars)"),
+    subtitle: z.string().max(255, "Subtitle too long (max 255 chars)"),
+    buttonText: z
+      .string()
+      .max(100, "Button text too long (max 100 chars)")
+      .optional(),
+    buttonUrl: z
+      .string()
+      .max(255, "Button URL too long (max 255 chars)")
+      .optional(),
+    image: imageMetadataCreateSchema,
+    isActive: z.boolean().default(true),
+    orderNumber: z
+      .number()
+      .int("Order number must be integer")
+      .min(1, "Order number must be positive")
+      .optional(),
+  })
+  .refine((data) => data.image.url, {
+    message: "Image is required for slider creation",
+    path: ["image"],
+  });
 
 // ✅ Update schema with optional image fields
-export const updateSliderSchema = z.object({
-  title: z
-    .string()
-    .min(1, "Title is required")
-    .max(255, "Title too long (max 255 chars)")
-    .optional(),
-  subtitle: z.string().max(255, "Subtitle too long (max 255 chars)"),
-  buttonText: z
-    .string()
-    .max(100, "Button text too long (max 100 chars)")
-    .optional(),
-  buttonUrl: z
-    .string()
-    .max(255, "Button URL too long (max 255 chars)")
-    .optional(),
-  image: imageMetadataUpdateSchema.optional(),
-  isActive: z.boolean().default(true),
-  orderNumber: z
-    .number()
-    .int("Order number must be integer")
-    .min(1, "Order number must be positive")
-    .optional(),
-});
+export const updateSliderSchema = z
+  .object({
+    title: z
+      .string()
+      .min(1, "Title is required")
+      .max(255, "Title too long (max 255 chars)")
+      .optional(),
+    subtitle: z
+      .string()
+      .max(255, "Subtitle too long (max 255 chars)")
+      .default(""),
+    buttonText: z
+      .string()
+      .max(100, "Button text too long (max 100 chars)")
+      .optional(),
+    buttonUrl: z
+      .string()
+      .max(255, "Button URL too long (max 255 chars)")
+      .optional(),
+    image: imageMetadataUpdateSchema,
+    isActive: z.boolean().default(true),
+    orderNumber: z
+      .number()
+      .int("Order number must be integer")
+      .min(1, "Order number must be positive")
+      .optional(),
+  })
+  .refine((data) => data?.image?.url, {
+    message: "Image is required for slider update",
+    path: ["image"],
+  });
+
+// Form schema for edit dialog (all fields optional for form handling)
+export const editSliderFormSchema = z
+  .object({
+    title: z
+      .string()
+      .min(1, "Title is required")
+      .max(255, "Title too long (max 255 chars)")
+      .optional(),
+    subtitle: z
+      .string({
+        error: "Subtitle is required",
+      })
+      .max(255, "Subtitle too long (max 255 chars)"),
+    buttonText: z
+      .string()
+      .max(100, "Button text too long (max 100 chars)")
+      .optional(),
+    buttonUrl: z
+      .string()
+      .max(255, "Button URL too long (max 255 chars)")
+      .optional(),
+    image: imageMetadataUpdateSchema,
+    isActive: z.boolean().optional(),
+    orderNumber: z
+      .number()
+      .int("Order number must be integer")
+      .min(1, "Order number must be positive")
+      .optional(),
+  })
+  .refine((data) => data?.image?.url, {
+    message: "Image is required for slider update",
+    path: ["image"],
+  })
+  .refine((data) => data?.subtitle?.trim() !== "", {
+    message: "Subtitle is required",
+    path: ["subtitle"],
+  });
 
 export type Slider = z.infer<typeof sliderSchema>;
 export type SlidersResponse = z.infer<typeof slidersResponseSchema>;
 export type CreateSliderFormData = z.infer<typeof createSliderFormSchema>;
 export type CreateSliderApiData = z.infer<typeof createSliderSchema>;
 export type UpdateSliderFormData = z.infer<typeof updateSliderSchema>;
+export type EditSliderFormData = z.infer<typeof editSliderFormSchema>;
 export type ImageMetadata = z.infer<typeof imageMetadataCreateSchema>;
 
 // ✅ Export get sliders parameters interface
