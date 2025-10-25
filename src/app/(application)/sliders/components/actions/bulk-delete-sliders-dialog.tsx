@@ -54,7 +54,7 @@ export function BulkDeleteSlidersDialog({
       <DialogContent>
         <DialogHeader>
           <DialogTitle>
-            <Typography variant="Bold_H4">Delete Sliders</Typography>
+            <Typography variant="Bold_H4" as="span">Delete Sliders</Typography>
           </DialogTitle>
           <DialogDescription>
             <Typography variant="Regular_H6">

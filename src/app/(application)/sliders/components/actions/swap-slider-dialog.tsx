@@ -12,7 +12,7 @@ import {
 } from "@/components/ui/dialog";
 import { Typography } from "@/components/typography";
 import { swapSlider } from "@/api/sliders";
-import { Slider } from "@/schema/sliders";
+import { Slider } from "@/schemas/sliders";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -103,7 +103,7 @@ export function SwapSliderDialog({
       <DialogContent>
         <DialogHeader>
           <DialogTitle>
-            <Typography variant="Bold_H4">Swap Sliders</Typography>
+            <Typography variant="Bold_H4" as="span">Swap Sliders</Typography>
           </DialogTitle>
           <DialogDescription>
             <Typography variant="Regular_H6">

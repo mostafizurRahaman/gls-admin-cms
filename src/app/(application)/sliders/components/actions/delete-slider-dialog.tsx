@@ -56,7 +56,7 @@ export function DeleteSliderDialog({
       <DialogContent>
         <DialogHeader>
           <DialogTitle>
-            <Typography variant="Bold_H4">Delete Slider</Typography>
+            <Typography variant="Bold_H4" as="span">Delete Slider</Typography>
           </DialogTitle>
           <DialogDescription>
             <Typography variant="Regular_H6">
