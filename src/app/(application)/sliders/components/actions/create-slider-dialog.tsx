@@ -29,7 +29,7 @@ import {
   createSliderFormSchema,
   CreateSliderFormData,
   CreateSliderApiData,
-} from "@/schema/sliders";
+} from "@/schemas/sliders";
 import { SingleImageUpload } from "@/components/uploader/single-image-uploader";
 import {
   Select,
