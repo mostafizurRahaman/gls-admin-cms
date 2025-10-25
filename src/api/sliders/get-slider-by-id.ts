@@ -1,5 +1,5 @@
 import axiosInstance from "@/configs/axios";
-import { Slider } from "@/schema/sliders";
+import { Slider } from "@/schemas/sliders";
 
 export interface GetSliderByIdResponse {
   success: boolean;

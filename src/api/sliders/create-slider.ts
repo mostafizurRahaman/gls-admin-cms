@@ -1,5 +1,5 @@
 import axiosInstance from "@/configs/axios";
-import { CreateSliderApiData, Slider } from "@/schema/sliders";
+import { CreateSliderApiData, Slider } from "@/schemas/sliders";
 
 export interface CreateSliderResponse {
   success: boolean;

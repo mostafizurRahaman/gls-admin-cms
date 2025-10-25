@@ -1,5 +1,5 @@
 import axiosInstance from "@/configs/axios";
-import { GetSlidersParams, GetSlidersResponse } from "@/schema/sliders";
+import { GetSlidersParams, GetSlidersResponse } from "@/schemas/sliders";
 
 export const getAllSliders = async (params?: GetSlidersParams) => {
   const queryParams: Record<string, string | number | boolean> = {};

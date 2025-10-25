@@ -1,5 +1,5 @@
 import axiosInstance from "@/configs/axios";
-import { UpdateSliderFormData, Slider } from "@/schema/sliders";
+import { UpdateSliderFormData, Slider } from "@/schemas/sliders";
 
 export interface UpdateSliderResponse {
   success: boolean;

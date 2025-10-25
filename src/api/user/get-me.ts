@@ -6,7 +6,7 @@ import { IUser } from "@/types";
 // ✅ getMe function
 export const getMe = async (): Promise<ApiResponse<IUser>> => {
   try {
-    const res = await axiosInstance.post<ApiResponse<IUser>>("/user/get-me");
+    const res = await axiosInstance.post<ApiResponse<IUser>>("/users/get-me");
 
     if (!res.data.data) {
       throw new Error("User data not found");
