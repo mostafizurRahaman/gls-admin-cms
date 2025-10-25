@@ -1,20 +1,25 @@
-// app/categories/page.tsx
-
+import { Metadata } from "next";
+import { Suspense } from "react";
+import CategoriesTable from ".";
 import { Typography } from "@/components/typography";
-import CategoriesDataTable from ".";
+
+export const metadata: Metadata = {
+  title: "Categories Management",
+  description: "Manage all categories in the system.",
+};
 
 export default function CategoriesPage() {
   return (
     <div className="container mx-auto py-10">
-      <div className="mb-6">
-        <Typography variant="Bold_H2" className="mb-2">
-          Categories Management
-        </Typography>
-        <Typography variant="Regular_H6" className="text-muted-foreground">
-          Manage all service categories and their settings
+      <div className="mb-8">
+        <Typography variant="Bold_H2">Categories Management</Typography>
+        <Typography variant="Regular_H6" className="text-gray-500">
+          Manage all categories in the system.
         </Typography>
       </div>
-      <CategoriesDataTable />
+      <Suspense fallback={<div>Loading...</div>}>
+        <CategoriesTable />
+      </Suspense>
     </div>
   );
 }

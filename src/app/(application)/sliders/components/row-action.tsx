@@ -9,7 +9,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { Slider } from "@/schema/sliders";
+import { Slider } from "@/schemas/sliders";
 import { DeleteSliderDialog } from "./actions/delete-slider-dialog";
 import { EditSliderDialog } from "./actions/edit-slider-dialog";
 import { Typography } from "@/components/typography";
@@ -19,7 +19,9 @@ interface DataTableRowActionsProps<TData> {
   table: Table<TData>;
 }
 
-export function DataTableRowActions<TData>({ row }: DataTableRowActionsProps<TData>) {
+export function DataTableRowActions<TData>({
+  row,
+}: DataTableRowActionsProps<TData>) {
   const [showDeleteDialog, setShowDeleteDialog] = React.useState(false);
   const [showEditDialog, setShowEditDialog] = React.useState(false);
 

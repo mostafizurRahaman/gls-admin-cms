@@ -1,47 +1,26 @@
-// src/api/categories/components/columns.tsx
 "use client";
 
-import React from "react";
+import { format } from "date-fns";
 import { ColumnDef } from "@tanstack/react-table";
 import { DataTableColumnHeader } from "@/components/data-table/column-header";
+import { Checkbox } from "@/components/ui/checkbox";
 import { Badge } from "@/components/ui/badge";
 import { Typography } from "@/components/typography";
-import { CategoryDisplay } from "@/types";
-import { ActionCell } from "./row-action";
-import { Check, X } from "lucide-react";
-import { formatDateOnly } from "@/lib/format-date";
+import { Category, CategoryExportData } from "@/types/category";
+import { DataTableRowActions } from "./row-actions";
 
 export const getColumns = (
-  handleRowDeselection: ((rowId: string) => void) | null | undefined,
-  onSuccess?: () => void
-): ColumnDef<CategoryDisplay>[] => {
-  const baseColumns: ColumnDef<CategoryDisplay>[] = [
-    {
-      accessorKey: "sortOrder",
-      header: ({ column }) => (
-        <DataTableColumnHeader column={column} title="Order" />
-      ),
-      cell: ({ row }) => (
-        <div className="text-center">
-          <Badge variant="outline" className="font-mono">
-            <Typography variant="Medium_H6">
-              {row.getValue("sortOrder")}
-            </Typography>
-          </Badge>
-        </div>
-      ),
-      size: 80,
-    },
+  handleRowDeselection: ((rowId: string) => void) | null | undefined
+): ColumnDef<CategoryExportData>[] => {
+  const baseColumns: ColumnDef<CategoryExportData>[] = [
     {
       accessorKey: "name",
       header: ({ column }) => (
         <DataTableColumnHeader column={column} title="Name" />
       ),
       cell: ({ row }) => (
-        <div className="text-left">
-          <Typography variant="Medium_H6" className="text-foreground">
-            {row.getValue("name")}
-          </Typography>
+        <div className="font-medium">
+          <Typography variant="Medium_H6">{row.getValue("name")}</Typography>
         </div>
       ),
       size: 200,
@@ -51,65 +30,38 @@ export const getColumns = (
       header: ({ column }) => (
         <DataTableColumnHeader column={column} title="Tagline" />
       ),
-      cell: ({ row }) => (
-        <div className="text-left max-w-xs">
-          <Typography
-            variant="Regular_H7"
-            className="text-muted-foreground truncate"
-          >
-            {row.getValue("tagline")}
-          </Typography>
-        </div>
-      ),
-      size: 250,
-    },
-    {
-      accessorKey: "description",
-      header: ({ column }) => (
-        <DataTableColumnHeader column={column} title="Description" />
-      ),
       cell: ({ row }) => {
-        const description = row.getValue("description") as string;
+        const tagline = row.getValue("tagline") as string;
         return (
-          <div className="text-left max-w-md">
+          <div className="max-w-[200px]">
             <Typography
               variant="Regular_H7"
-              className="text-muted-foreground line-clamp-2"
+              className="text-gray-600"
+              maxLines={2}
             >
-              {description}
+              {tagline || "—"}
             </Typography>
           </div>
         );
       },
-      size: 300,
-      enableSorting: false,
+      size: 200,
     },
     {
-      accessorKey: "addons",
+      accessorKey: "isActive",
       header: ({ column }) => (
-        <DataTableColumnHeader column={column} title="Addons" />
+        <DataTableColumnHeader column={column} title="Status" />
       ),
       cell: ({ row }) => {
-        const addons = row.getValue("addons") as string[];
+        const isActive = row.getValue("isActive") as boolean;
         return (
-          <div className="flex flex-wrap gap-1 max-w-sm">
-            {addons.slice(0, 2).map((addon, index) => (
-              <Badge key={index} variant="secondary" className="text-xs">
-                <Typography variant="Regular_H7">{addon}</Typography>
-              </Badge>
-            ))}
-            {addons.length > 2 && (
-              <Badge variant="secondary" className="text-xs">
-                <Typography variant="Regular_H7">
-                  +{addons.length - 2} more
-                </Typography>
-              </Badge>
-            )}
-          </div>
+          <Badge variant={isActive ? "default" : "secondary"}>
+            <Typography variant="Regular_H7">
+              {isActive ? "Active" : "Inactive"}
+            </Typography>
+          </Badge>
         );
       },
-      size: 300,
-      enableSorting: false,
+      size: 100,
     },
     {
       accessorKey: "isPremium",
@@ -119,19 +71,11 @@ export const getColumns = (
       cell: ({ row }) => {
         const isPremium = row.getValue("isPremium") as boolean;
         return (
-          <div className="flex justify-center">
-            {isPremium ? (
-              <Badge className="bg-status-success/10 text-status-success hover:bg-status-success/20">
-                <Check className="w-3 h-3 mr-1" />
-                <Typography variant="Medium_H7">Yes</Typography>
-              </Badge>
-            ) : (
-              <Badge variant="outline" className="text-muted-foreground">
-                <X className="w-3 h-3 mr-1" />
-                <Typography variant="Medium_H7">No</Typography>
-              </Badge>
-            )}
-          </div>
+          <Badge variant={isPremium ? "default" : "outline"}>
+            <Typography variant="Regular_H7">
+              {isPremium ? "Premium" : "Standard"}
+            </Typography>
+          </Badge>
         );
       },
       size: 100,
@@ -142,21 +86,15 @@ export const getColumns = (
         <DataTableColumnHeader column={column} title="Repair Service" />
       ),
       cell: ({ row }) => {
-        const isRepairing = row.getValue("isRepairingService") as boolean;
+        const isRepairingService = row.getValue(
+          "isRepairingService"
+        ) as boolean;
         return (
-          <div className="flex justify-center">
-            {isRepairing ? (
-              <Badge className="bg-blue-500/10 text-blue-600 hover:bg-blue-500/20">
-                <Check className="w-3 h-3 mr-1" />
-                <Typography variant="Medium_H7">Yes</Typography>
-              </Badge>
-            ) : (
-              <Badge variant="outline" className="text-muted-foreground">
-                <X className="w-3 h-3 mr-1" />
-                <Typography variant="Medium_H7">No</Typography>
-              </Badge>
-            )}
-          </div>
+          <Badge variant={isRepairingService ? "default" : "outline"}>
+            <Typography variant="Regular_H7">
+              {isRepairingService ? "Yes" : "No"}
+            </Typography>
+          </Badge>
         );
       },
       size: 120,
@@ -164,39 +102,63 @@ export const getColumns = (
     {
       accessorKey: "isShowHome",
       header: ({ column }) => (
-        <DataTableColumnHeader column={column} title="Show Home" />
+        <DataTableColumnHeader column={column} title="Show on Home" />
       ),
       cell: ({ row }) => {
         const isShowHome = row.getValue("isShowHome") as boolean;
         return (
-          <div className="flex justify-center">
-            {isShowHome ? (
-              <Badge className="bg-purple-500/10 text-purple-600 hover:bg-purple-500/20">
-                <Check className="w-3 h-3 mr-1" />
-                <Typography variant="Medium_H7">Yes</Typography>
-              </Badge>
-            ) : (
-              <Badge variant="outline" className="text-muted-foreground">
-                <X className="w-3 h-3 mr-1" />
-                <Typography variant="Medium_H7">No</Typography>
-              </Badge>
-            )}
-          </div>
+          <Badge variant={isShowHome ? "default" : "outline"}>
+            <Typography variant="Regular_H7">
+              {isShowHome ? "Yes" : "No"}
+            </Typography>
+          </Badge>
         );
       },
       size: 120,
     },
     {
-      accessorKey: "createdAt",
+      accessorKey: "sortOrder",
       header: ({ column }) => (
-        <DataTableColumnHeader column={column} title="Created At" />
+        <DataTableColumnHeader column={column} title="Order" />
+      ),
+      cell: ({ row }) => (
+        <div className="text-center">
+          <Typography variant="Regular_H7">
+            {row.getValue("sortOrder")}
+          </Typography>
+        </div>
+      ),
+      size: 80,
+      enableSorting: false,
+    },
+    {
+      accessorKey: "_count",
+      header: ({ column }) => (
+        <DataTableColumnHeader column={column} title="Services" />
       ),
       cell: ({ row }) => {
-        const createdAt = row.getValue("createdAt") as string;
+        const count = row.getValue("_count") as
+          | { services: number }
+          | undefined;
         return (
-          <div className="text-left">
-            <Typography variant="Regular_H7" className="text-muted-foreground">
-              {formatDateOnly(createdAt, "UTC")}
+          <div className="text-center">
+            <Typography variant="Regular_H7">{count?.services || 0}</Typography>
+          </div>
+        );
+      },
+      size: 80,
+    },
+    {
+      accessorKey: "createdAt",
+      header: ({ column }) => (
+        <DataTableColumnHeader column={column} title="Created" />
+      ),
+      cell: ({ row }) => {
+        const date = new Date(row.getValue("createdAt"));
+        return (
+          <div>
+            <Typography variant="Regular_H7">
+              {format(date, "MMM d, yyyy")}
             </Typography>
           </div>
         );
@@ -208,13 +170,49 @@ export const getColumns = (
       header: ({ column }) => (
         <DataTableColumnHeader column={column} title="Actions" />
       ),
-      cell: ({ row }) => {
-        return <ActionCell category={row.original} onSuccess={onSuccess} />;
-      },
-      size: 80,
-      enableSorting: false,
+      cell: ({ row, table }) => <DataTableRowActions row={row} table={table} />,
+      size: 100,
     },
   ];
+
+  // Only include selection column if row selection is enabled
+  if (handleRowDeselection !== null) {
+    return [
+      {
+        id: "select",
+        header: ({ table }) => (
+          <Checkbox
+            checked={
+              table.getIsAllPageRowsSelected() ||
+              (table.getIsSomePageRowsSelected() && "indeterminate")
+            }
+            onCheckedChange={(value) =>
+              table.toggleAllPageRowsSelected(!!value)
+            }
+            aria-label="Select all"
+            className="translate-y-0.5 cursor-pointer"
+          />
+        ),
+        cell: ({ row }) => (
+          <Checkbox
+            checked={row.getIsSelected()}
+            onCheckedChange={(value) => {
+              row.toggleSelected(!!value);
+              if (!value && handleRowDeselection) {
+                handleRowDeselection(row.id);
+              }
+            }}
+            aria-label="Select row"
+            className="translate-y-0.5 cursor-pointer"
+          />
+        ),
+        enableSorting: false,
+        enableHiding: false,
+        size: 50,
+      },
+      ...baseColumns,
+    ];
+  }
 
   return baseColumns;
 };

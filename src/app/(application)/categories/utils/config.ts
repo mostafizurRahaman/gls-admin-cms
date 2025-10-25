@@ -1,31 +1,7 @@
-// src/api/categories/utils/config.ts
-import { useMemo } from "react";
-import { CategoryDisplay, CategoryExportable } from "@/types";
 import { formatDateOnly } from "@/lib/format-date";
+import { CategoryExportData } from "@/types";
+import { useMemo } from "react";
 
-/**
- * Transform category data for export by flattening complex fields
- */
-const transformCategoryForExport = (
-  category: CategoryDisplay
-): CategoryExportable => {
-  return {
-    id: category.id || "N/A",
-    name: category.name || "N/A",
-    tagline: category.tagline || "N/A",
-    description: category.description || "N/A",
-    isPremium: category.isPremium ? "Yes" : "No",
-    isRepairingService: category.isRepairingService ? "Yes" : "No",
-    isShowHome: category.isShowHome ? "Yes" : "No",
-    sortOrder: category.sortOrder || 0,
-    addons: category.addons?.join(", ") || "N/A",
-    createdAt: formatDateOnly(category.createdAt, "UTC"),
-  };
-};
-
-/**
- * Default export configuration for the categories data table
- */
 export function useExportConfig() {
   // Column mapping for export
   const columnMapping = useMemo(() => {
@@ -34,28 +10,30 @@ export function useExportConfig() {
       name: "Name",
       tagline: "Tagline",
       description: "Description",
+      isActive: "Status",
       isPremium: "Premium",
-      isRepairingService: "Repairing Service",
+      isRepairingService: "Repair Service",
       isShowHome: "Show on Home",
       sortOrder: "Sort Order",
-      addons: "Addons",
-      createdAt: "Created At",
+      createdAt: "Created Date",
+      updatedAt: "Updated Date",
     };
   }, []);
 
   // Column widths for Excel export
   const columnWidths = useMemo(() => {
     return [
-      { wch: 15 }, // ID
+      { wch: 10 }, // ID
       { wch: 25 }, // Name
-      { wch: 40 }, // Tagline
-      { wch: 60 }, // Description
+      { wch: 30 }, // Tagline
+      { wch: 40 }, // Description
+      { wch: 12 }, // Status
       { wch: 12 }, // Premium
-      { wch: 18 }, // Repairing Service
+      { wch: 15 }, // Repair Service
       { wch: 15 }, // Show on Home
       { wch: 12 }, // Sort Order
-      { wch: 50 }, // Addons
-      { wch: 15 }, // Created At
+      { wch: 20 }, // Created Date
+      { wch: 20 }, // Updated Date
     ];
   }, []);
 
@@ -66,20 +44,44 @@ export function useExportConfig() {
       "name",
       "tagline",
       "description",
+      "isActive",
       "isPremium",
       "isRepairingService",
       "isShowHome",
       "sortOrder",
-      "addons",
       "createdAt",
+      "updatedAt",
     ];
+  }, []);
+
+  // Transform function for export data formatting
+  const transformData = useMemo(() => {
+    return (data: CategoryExportData) => {
+      return {
+        id: data.id,
+        name: data.name,
+        tagline: data.tagline || "",
+        description: data.description || "",
+        isActive: data.isActive ? "Active" : "Inactive",
+        isPremium: data.isPremium ? "Yes" : "No",
+        isRepairingService: data.isRepairingService ? "Yes" : "No",
+        isShowHome: data.isShowHome ? "Yes" : "No",
+        sortOrder: data.sortOrder || 0,
+        createdAt: data.createdAt
+          ? formatDateOnly(new Date(data.createdAt))
+          : "",
+        updatedAt: data.updatedAt
+          ? formatDateOnly(new Date(data.updatedAt))
+          : "",
+      };
+    };
   }, []);
 
   return {
     columnMapping,
     columnWidths,
     headers,
-    entityName: "categories",
-    transformFunction: transformCategoryForExport,
+    entityName: "categories", // Used for filename
+    transformFunction: transformData,
   };
 }
