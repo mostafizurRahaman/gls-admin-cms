@@ -9,3 +9,4 @@ export interface IUser {
   updatedAt: Date;
 }
 export * from "./category";
+export * from "./service";

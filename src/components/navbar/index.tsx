@@ -59,17 +59,10 @@ const navigationItems: NavItem[] = [
         title: "Categories",
         href: "/categories",
       },
-      {
-        title: "Categories Addons",
-        href: "/categories-addons",
-      },
+
       {
         title: "Services",
         href: "/services",
-      },
-      {
-        title: "Services Addons",
-        href: "/services-addons",
       },
     ],
   },

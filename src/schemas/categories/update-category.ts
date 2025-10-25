@@ -23,7 +23,7 @@ export const updateCategorySchema = z.object({
   isShowHome: z.boolean(),
   isActive: z.boolean(),
   sortOrder: z.number().int().positive().optional(), // ✅ Make optional
-  userId: z.string().uuid("Invalid user ID format").optional().nullable(), // ✅ Make optional too
+  userId: z.string().optional(), // ✅ Make optional too
   addons: z.array(z.string().min(1, "Addon text cannot be empty")),
 });
 

@@ -24,8 +24,10 @@ export interface CategoryAddon {
 export interface Service {
   id: string;
   name: string;
-  description?: string;
+  tagline: string;
+  description: string;
   price: number;
+  image: ImageMetadata;
   isActive: boolean;
   isPremium: boolean;
   parentCategoryId: string;
@@ -56,8 +58,8 @@ export interface User {
 export type CategoryExportData = {
   id: string;
   name: string;
-  tagline: string | null;
-  description: string | null;
+  tagline: string;
+  description: string;
   isActive: boolean;
   isPremium: boolean;
   isRepairingService: boolean;
