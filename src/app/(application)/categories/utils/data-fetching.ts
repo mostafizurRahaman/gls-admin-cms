@@ -35,6 +35,8 @@ export function useCategoriesData(
           | "isPremium"
           | "isActive",
         sortOrder: sortOrder as "asc" | "desc",
+        from_date: dateRange.from_date,
+        to_date: dateRange.to_date,
       });
 
       return {

@@ -40,6 +40,7 @@ import {
   removeCategoryAddOn,
 } from "@/api/category-add-ons";
 import { Category, UpdateCategoryRequest } from "@/types/category";
+import { useGetMe } from "@/hooks";
 
 interface EditCategoryModalProps {
   open: boolean;
@@ -59,6 +60,7 @@ export function EditCategoryModal({
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [addons, setAddons] = useState<string[]>([]);
   const [newAddon, setNewAddon] = useState("");
+  const { user, loading } = useGetMe();
 
   const form = useForm({
     resolver: zodResolver(updateCategorySchema),
@@ -174,6 +176,7 @@ export function EditCategoryModal({
         ...data,
         tagline: data.tagline?.trim() || "",
         description: data.description?.trim() || "",
+        userId: user?.id,
       };
 
       // Remove addons from the data since we handle them separately
@@ -324,19 +327,21 @@ export function EditCategoryModal({
                             placeholder="Enter sort order"
                             className="bg-background border-input text-foreground placeholder:text-muted-foreground"
                             disabled={isSubmitting}
-                            {...field}
                             value={field.value ?? ""}
                             onChange={(e) => {
                               const value = e.target.value;
                               if (value === "") {
-                                field.onChange(undefined);
+                                field.onChange(null);
                               } else {
                                 const parsed = parseInt(value, 10);
                                 if (!isNaN(parsed)) {
                                   field.onChange(parsed);
+                                } else {
+                                  field.onChange(null);
                                 }
                               }
                             }}
+                            onFocus={(e) => e.target.select()}
                           />
                         </FormControl>
                         <FormMessage className="text-destructive" />

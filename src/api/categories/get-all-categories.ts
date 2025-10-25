@@ -23,6 +23,8 @@ export async function getAllCategories(
     isShowHome,
     search,
     userId,
+    from_date,
+    to_date,
   } = params;
 
   const queryParams = new URLSearchParams();
@@ -41,6 +43,8 @@ export async function getAllCategories(
     queryParams.append("isShowHome", isShowHome.toString());
   if (search) queryParams.append("search", search);
   if (userId) queryParams.append("userId", userId);
+  if (from_date) queryParams.append("from_date", from_date);
+  if (to_date) queryParams.append("to_date", to_date);
 
   const response = await axiosInstance.get<CategoriesResponse>(
     `/categories?${queryParams.toString()}`
