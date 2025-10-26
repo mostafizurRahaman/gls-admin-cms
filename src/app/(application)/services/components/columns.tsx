@@ -8,6 +8,7 @@ import { StatusChips } from "@/components/badges/status-switcher";
 import { Typography } from "@/components/typography";
 import { Service, ServiceExportData } from "@/types";
 import { DataTableRowActions } from "./row-actions";
+import { Badge } from "@/components/ui/badge";
 
 export const getColumns = (
   handleRowDeselection: ((rowId: string) => void) | null | undefined
@@ -34,11 +35,7 @@ export const getColumns = (
         const tagline = row.getValue("tagline") as string;
         return (
           <div className="max-w-[200px]">
-            <Typography
-              variant="Regular_H7"
-              
-              maxLines={2}
-            >
+            <Typography variant="Regular_H7" maxLines={2}>
               {tagline || "—"}
             </Typography>
           </div>

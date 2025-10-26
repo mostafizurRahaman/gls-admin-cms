@@ -3,7 +3,12 @@ import { CheckCircle2, XCircle, Clock, ThumbsUp } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Typography } from "@/components/typography";
 
-type IStatus = "active" | "inactive" | "rejected" | "pending" | "approved";
+export type IStatus =
+  | "active"
+  | "inactive"
+  | "rejected"
+  | "pending"
+  | "approved";
 
 const statusConfig: Record<
   IStatus,

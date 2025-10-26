@@ -2,3 +2,4 @@ export * from './category';
 export * from './service';
 export * from './testimonial';
 export * from './gallery';
+export * from '../api/contact-us/types';

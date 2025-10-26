@@ -3541,3 +3541,114 @@ https://nextjs.org/docs/messages/module-not-found
       at <unknown> (D:\MOP\apps\admin-cms\.next\server\chunks\ssr\apps_admin-cms_src_42120281._.js:8661)
 }
  ⨯ unhandledRejection:  [Error: Failed to load chunk server/chunks/ssr/apps_admin-cms_src_42120281._.js from module [project]/apps/admin-cms/node_modules/next/dist/esm/build/templates/app-page.js?page=/(application)/galleries/page { GLOBAL_ERROR_MODULE => "[project]/apps/admin-cms/node_modules/next/dist/client/components/builtin/global-error.js [app-rsc] (ecmascript, Next.js Server Component)", METADATA_0 => "[project]/apps/admin-cms/src/app/favicon.ico.mjs { IMAGE => \"[project]/apps/admin-cms/src/app/favicon.ico (static in ecmascript)\" } [app-rsc] (structured image object, ecmascript, Next.js Server Component)", MODULE_1 => "[project]/apps/admin-cms/src/app/layout.tsx [app-rsc] (ecmascript, Next.js Server Component)", MODULE_2 => "[project]/apps/admin-cms/node_modules/next/dist/client/components/builtin/not-found.js [app-rsc] (ecmascript, Next.js Server Component)", MODULE_3 => "[project]/apps/admin-cms/node_modules/next/dist/client/components/builtin/forbidden.js [app-rsc] (ecmascript, Next.js Server Component)", MODULE_4 => "[project]/apps/admin-cms/node_modules/next/dist/client/components/builtin/unauthorized.js [app-rsc] (ecmascript, Next.js Server Component)", MODULE_5 => "[project]/apps/admin-cms/node_modules/next/dist/client/components/builtin/global-error.js [app-rsc] (ecmascript, Next.js Server Component)", MODULE_6 => "[project]/apps/admin-cms/src/app/(application)/layout.tsx [app-rsc] (ecmascript, Next.js Server Component)", MODULE_7 => "[project]/apps/admin-cms/node_modules/next/dist/client/components/builtin/not-found.js [app-rsc] (ecmascript, Next.js Server Component)", MODULE_8 => "[project]/apps/admin-cms/node_modules/next/dist/client/components/builtin/forbidden.js [app-rsc] (ecmascript, Next.js Server Component)", MODULE_9 => "[project]/apps/admin-cms/node_modules/next/dist/client/components/builtin/unauthorized.js [app-rsc] (ecmascript, Next.js Server Component)", MODULE_10 => "[project]/apps/admin-cms/src/app/(application)/galleries/page.tsx [app-rsc] (ecmascript, Next.js Server Component)" } [app-rsc] (ecmascript) <locals>] {
+  [cause]: SyntaxError: Unexpected token '<'
+      at <unknown> (D:\MOP\apps\admin-cms\.next\server\chunks\ssr\apps_admin-cms_src_42120281._.js:8661)
+}
+ ✓ Compiled in 4ms
+ GET /galleries 200 in 1815ms
+ ✓ Compiled in 169ms
+ GET /favicon.ico?favicon.0b3bf435.ico 200 in 258ms
+ ✓ Compiled in 106ms
+ ✓ Compiled in 126ms
+ ✓ Compiled in 109ms
+ GET /help 404 in 68ms
+ GET /help 404 in 93ms
+{ user: null }
+ GET /galleries 200 in 421ms
+ GET /galleries 200 in 194ms
+ GET /galleries 200 in 76ms
+ ✓ Compiled in 213ms
+ ✓ Compiled in 155ms
+ ✓ Compiled in 165ms
+ ✓ Compiled in 161ms
+ ✓ Compiled in 180ms
+ ✓ Compiled in 211ms
+ ○ Compiling /contact-us ...
+ ✓ Compiled /contact-us in 525ms
+{ user: null }
+ GET /contact-us 200 in 944ms
+ ✓ Compiled in 118ms
+ ✓ Compiled in 119ms
+ ✓ Compiled in 121ms
+ GET /dashboard 404 in 147ms
+ GET /dashboard 404 in 109ms
+ ✓ Compiled /categories in 470ms
+{ user: null }
+ GET /categories 200 in 630ms
+ ✓ Compiled /services in 419ms
+{ user: null }
+ GET /services 200 in 549ms
+ ⚠ Fast Refresh had to perform a full reload due to a runtime error.
+ ✓ Compiled in 121ms
+ ⚠ Fast Refresh had to perform a full reload due to a runtime error.
+{ user: null }
+ ✓ Compiled in 147ms
+ GET /services 200 in 683ms
+ GET /favicon.ico?favicon.0b3bf435.ico 200 in 316ms
+ ✓ Compiled in 144ms
+ ✓ Compiled in 173ms
+{ user: null }
+ GET /services 200 in 429ms
+ GET /favicon.ico?favicon.0b3bf435.ico 200 in 264ms
+{ user: null }
+ GET /services 200 in 100ms
+ GET /favicon.ico?favicon.0b3bf435.ico 200 in 273ms
+{ user: null }
+ GET /categories 200 in 126ms
+{ user: null }
+ GET /categories 200 in 98ms
+{ user: null }
+ GET /contact-us 200 in 433ms
+{ user: null }
+ GET /contact-us 200 in 108ms
+ GET /favicon.ico?favicon.0b3bf435.ico 200 in 267ms
+ ⨯ upstream image response failed for https://example.com/image1.jpg 404
+ ⨯ upstream image response failed for https://example.com/image2.jpg 404
+ ⨯ upstream image response failed for https://example.com/image1.jpg 404
+ ⨯ upstream image response failed for https://example.com/image2.jpg 404
+ ⨯ upstream image response failed for https://example.com/image1.jpg 404
+ ⨯ upstream image response failed for https://example.com/image1.jpg 404
+ ✓ Compiled in 142ms
+ ✓ Compiled in 145ms
+ ✓ Compiled in 118ms
+ ✓ Compiled in 150ms
+ ✓ Compiled in 148ms
+ ✓ Compiled in 149ms
+ ✓ Compiled in 135ms
+ ✓ Compiled in 125ms
+ ✓ Compiled in 115ms
+ ✓ Compiled in 213ms
+ ✓ Compiled in 108ms
+ ✓ Compiled in 121ms
+ ✓ Compiled in 122ms
+ ✓ Compiled in 124ms
+ ✓ Compiled in 324ms
+ ✓ Compiled /contact-us in 45ms
+ GET /contact-us 200 in 215ms
+ ✓ Compiled in 296ms
+ ✓ Compiled in 172ms
+ ✓ Compiled in 158ms
+ ✓ Compiled /contact-us in 33ms
+ GET /contact-us 200 in 147ms
+ ✓ Compiled in 142ms
+ ✓ Compiled in 125ms
+ ✓ Compiled in 130ms
+ ⚠ Fast Refresh had to perform a full reload due to a runtime error.
+ ✓ Compiled in 239ms
+ ✓ Compiled /contact-us in 56ms
+ ⚠ Fast Refresh had to perform a full reload due to a runtime error.
+{ user: null }
+ ✓ Compiled in 235ms
+ GET /contact-us 200 in 624ms
+ GET /favicon.ico?favicon.0b3bf435.ico 200 in 259ms
+{ user: null }
+ GET /contact-us 200 in 379ms
+ GET /favicon.ico?favicon.0b3bf435.ico 200 in 275ms
+ ✓ Compiled in 148ms
+ ✓ Compiled in 148ms
+ ✓ Compiled in 202ms
+ ✓ Compiled /contact-us in 42ms
+ GET /contact-us 200 in 183ms
+ ✓ Compiled in 125ms
+ ✓ Compiled in 148ms
+ ✓ Compiled /contact-us in 89ms
