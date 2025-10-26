@@ -6,103 +6,59 @@ import { DataTableColumnHeader } from "@/components/data-table/column-header";
 import { Checkbox } from "@/components/ui/checkbox";
 import { StatusChips } from "@/components/badges/status-switcher";
 import { Typography } from "@/components/typography";
-import { Star } from "lucide-react";
-import { TestimonialExportData } from "@/types";
+import { Gallery, GalleryExportData } from "@/types/gallery";
 import { DataTableRowActions } from "./row-actions";
+import { ImageCell } from "@/components/image-viewer";
 
 export const getColumns = (
   handleRowDeselection: ((rowId: string) => void) | null | undefined
-): ColumnDef<TestimonialExportData>[] => {
-  const baseColumns: ColumnDef<TestimonialExportData>[] = [
+): ColumnDef<GalleryExportData>[] => {
+  const baseColumns: ColumnDef<GalleryExportData>[] = [
     {
-      accessorKey: "name",
+      accessorKey: "caption",
       header: ({ column }) => (
-        <DataTableColumnHeader column={column} title="Name" />
+        <DataTableColumnHeader column={column} title="Caption" />
       ),
       cell: ({ row }) => (
         <div className="font-medium">
-          <Typography variant="Medium_H6">{row.getValue("name")}</Typography>
+          <Typography variant="Medium_H6">
+            {row.original.caption || "—"}
+          </Typography>
         </div>
       ),
       size: 200,
     },
     {
-      accessorKey: "message",
+      accessorKey: "categoryName",
       header: ({ column }) => (
-        <DataTableColumnHeader column={column} title="Message" />
+        <DataTableColumnHeader column={column} title="Category" />
       ),
       cell: ({ row }) => {
-        const message = row.getValue("message") as string;
+        const categoryName = row.original.category?.name as unknown as string;
         return (
-          <div className="max-w-[300px]">
+          <div className="max-w-[150px]">
             <Typography variant="Regular_H7" maxLines={2}>
-              {message || "—"}
+              {categoryName || "—"}
             </Typography>
           </div>
         );
       },
-      size: 300,
+      size: 150,
     },
     {
-      accessorKey: "rating",
+      accessorKey: "imageUrl",
       header: ({ column }) => (
-        <DataTableColumnHeader column={column} title="Rating" />
+        <DataTableColumnHeader column={column} title="Image" />
       ),
       cell: ({ row }) => {
-        const rating = row.getValue("rating") as number;
+        const imageUrl = row.original.image?.url as string;
+        const caption = row.original.caption as string;
         return (
-          <div className="flex items-center space-x-1">
-            <Typography variant="Regular_H7">{rating}</Typography>
-            <div className="flex">
-              {[...Array(5)].map((_, i) => (
-                <Star
-                  key={i}
-                  className={`w-3 h-3 ${
-                    i < rating
-                      ? "text-yellow-400 fill-current"
-                      : "text-gray-300"
-                  }`}
-                />
-              ))}
-            </div>
-          </div>
+          <ImageCell imageUrl={imageUrl} title={caption || "Gallery image"} />
         );
       },
       size: 100,
-    },
-    {
-      accessorKey: "position",
-      header: ({ column }) => (
-        <DataTableColumnHeader column={column} title="Position" />
-      ),
-      cell: ({ row }) => {
-        const position = row.getValue("position") as string;
-        return (
-          <div className="max-w-[150px]">
-            <Typography variant="Regular_H7" maxLines={1}>
-              {position || "—"}
-            </Typography>
-          </div>
-        );
-      },
-      size: 150,
-    },
-    {
-      accessorKey: "company",
-      header: ({ column }) => (
-        <DataTableColumnHeader column={column} title="Company" />
-      ),
-      cell: ({ row }) => {
-        const company = row.getValue("company") as string;
-        return (
-          <div className="max-w-[150px]">
-            <Typography variant="Regular_H7" maxLines={1}>
-              {company || "—"}
-            </Typography>
-          </div>
-        );
-      },
-      size: 150,
+      enableSorting: false,
     },
     {
       accessorKey: "isActive",

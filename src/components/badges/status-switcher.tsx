@@ -59,7 +59,7 @@ export const StatusChips: FC<{ status: IStatus }> = ({ status }) => {
   return (
     <Badge
       variant={s.variant}
-      className={`inline-flex w-full items-center gap-1 px-3 py-1 rounded-lg border ${s.bgClass}`}
+      className={`inline-flex w-fit items-center gap-1 px-3 py-1 rounded-lg border ${s.bgClass}`}
     >
       {s.icon}
       <Typography variant="Medium_H6" className={s.textClass}>

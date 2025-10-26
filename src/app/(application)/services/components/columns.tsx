@@ -4,7 +4,7 @@ import { format } from "date-fns";
 import { ColumnDef } from "@tanstack/react-table";
 import { DataTableColumnHeader } from "@/components/data-table/column-header";
 import { Checkbox } from "@/components/ui/checkbox";
-import { Badge } from "@/components/ui/badge";
+import { StatusChips } from "@/components/badges/status-switcher";
 import { Typography } from "@/components/typography";
 import { Service, ServiceExportData } from "@/types";
 import { DataTableRowActions } from "./row-actions";
@@ -70,13 +70,7 @@ export const getColumns = (
       ),
       cell: ({ row }) => {
         const isActive = row.getValue("isActive") as boolean;
-        return (
-          <Badge variant={isActive ? "default" : "secondary"}>
-            <Typography variant="Regular_H7">
-              {isActive ? "Active" : "Inactive"}
-            </Typography>
-          </Badge>
-        );
+        return <StatusChips status={isActive ? "active" : "inactive"} />;
       },
       size: 100,
     },

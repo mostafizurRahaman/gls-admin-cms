@@ -73,6 +73,11 @@ const navigationItems: NavItem[] = [
         href: "/testimonials",
         description: "Customer reviews and feedback",
       },
+      {
+        title: "Galleries",
+        href: "/galleries",
+        description: "Manage gallery images",
+      },
     ],
   },
   {
