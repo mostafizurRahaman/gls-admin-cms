@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import {
   Menu,
@@ -9,14 +9,17 @@ import {
   Settings,
   Users,
   FileText,
+  Star,
   LayoutDashboard,
   Bell,
   HelpCircle,
   LogOut,
   User,
+  ChevronRight,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { ThemeToggle } from "@/components/ui/theme-toggle";
+import { cn } from "@/lib/utils";
 import IcoLogo from "@/assets/icons/ico-logo";
 
 // Define navigation item types
@@ -58,11 +61,17 @@ const navigationItems: NavItem[] = [
       {
         title: "Categories",
         href: "/categories",
+        description: "Manage website categories",
       },
-
       {
         title: "Services",
         href: "/services",
+        description: "Manage service listings",
+      },
+      {
+        title: "Testimonials",
+        href: "/testimonials",
+        description: "Customer reviews and feedback",
       },
     ],
   },
@@ -96,6 +105,18 @@ export default function Navigation() {
     setOpenDropdown(null);
   };
 
+  // Close dropdown when clicking outside
+  useEffect(() => {
+    const handleClickOutside = () => {
+      setOpenDropdown(null);
+    };
+    
+    document.addEventListener('click', handleClickOutside);
+    return () => {
+      document.removeEventListener('click', handleClickOutside);
+    };
+  }, []);
+
   return (
     <nav className="bg-background border-b border-border sticky top-0 z-50 shadow-sm">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -115,35 +136,47 @@ export default function Navigation() {
                   // Dropdown Menu
                   <div className="relative">
                     <button
-                      className="flex items-center space-x-1 px-3 py-2 rounded-md text-sm font-medium text-foreground hover:bg-accent hover:text-accent-foreground transition-colors"
+                      className={cn(
+                        "flex items-center space-x-2 px-4 py-2.5 rounded-lg text-sm font-medium text-foreground transition-all duration-200 hover:bg-accent/50 hover:text-accent-foreground cursor-pointer",
+                        openDropdown === item.title && "bg-accent text-accent-foreground"
+                      )}
                       onMouseEnter={() => setOpenDropdown(item.title)}
                       onMouseLeave={() => setOpenDropdown(null)}
                     >
                       {item.icon && <span>{item.icon}</span>}
                       <span>{item.title}</span>
-                      <ChevronDown className="w-4 h-4" />
+                      <ChevronDown className={`w-4 h-4 transition-transform duration-200 ${
+                        openDropdown === item.title ? "rotate-180" : ""
+                      }`} />
                     </button>
 
                     {/* Dropdown Content */}
                     {openDropdown === item.title && (
-                      <div
-                        className="absolute left-0 mt-1 w-56 rounded-md shadow-lg bg-background border border-border"
-                        onMouseEnter={() => setOpenDropdown(item.title)}
-                        onMouseLeave={() => setOpenDropdown(null)}
-                      >
-                        <div className="py-1">
-                          {item.subItems.map((subItem) => (
+                      <div className="absolute left-0 mt-2 min-w-72 rounded-lg shadow-xl bg-background border border-border animate-in fade-in-0 slide-in-from-top-5">
+                        <div className="py-2">
+                          {item.subItems.map((subItem, index) => (
                             <Link
                               key={subItem.title}
                               href={subItem.href}
-                              className="block px-4 py-2 text-sm text-foreground hover:bg-accent hover:text-accent-foreground transition-colors"
-                            >
-                              <div className="font-medium">{subItem.title}</div>
-                              {subItem.description && (
-                                <div className="text-xs text-muted-foreground mt-0.5">
-                                  {subItem.description}
-                                </div>
+                              className={cn(
+                                "block px-5 py-3 text-sm transition-all duration-200 hover:bg-accent/50 hover:text-accent-foreground border-b border-transparent hover:border-accent/50",
+                                index === 0 && "rounded-t-lg",
+                                index === item.subItems!.length - 1 && "rounded-b-lg"
                               )}
+                            >
+                              <div className="flex items-center space-x-3">
+                                <ChevronRight className="w-3.5 h-3.5 text-muted-foreground" />
+                                <div>
+                                  <div className="font-medium text-foreground">
+                                    {subItem.title}
+                                  </div>
+                                  {subItem.description && (
+                                    <div className="text-xs text-muted-foreground mt-0.5">
+                                      {subItem.description}
+                                    </div>
+                                  )}
+                                </div>
+                              </div>
                             </Link>
                           ))}
                         </div>
@@ -154,7 +187,7 @@ export default function Navigation() {
                   // Single Link
                   <Link
                     href={item.href!}
-                    className="flex items-center space-x-1 px-3 py-2 rounded-md text-sm font-medium text-foreground hover:bg-accent hover:text-accent-foreground transition-colors"
+                    className="flex items-center space-x-2 px-4 py-2.5 rounded-lg text-sm font-medium text-foreground transition-all duration-200 hover:bg-accent/50 hover:text-accent-foreground"
                   >
                     {item.icon && <span>{item.icon}</span>}
                     <span>{item.title}</span>
@@ -231,9 +264,9 @@ export default function Navigation() {
                   <div>
                     <button
                       onClick={() => toggleDropdown(item.title)}
-                      className="w-full flex items-center justify-between px-3 py-2 rounded-md text-base font-medium text-foreground hover:bg-accent hover:text-accent-foreground transition-colors"
+                      className="w-full flex items-center justify-between px-4 py-3 rounded-lg text-base font-medium text-foreground hover:bg-accent transition-colors"
                     >
-                      <div className="flex items-center space-x-2">
+                      <div className="flex items-center space-x-3">
                         {item.icon && <span>{item.icon}</span>}
                         <span>{item.title}</span>
                       </div>
@@ -246,20 +279,30 @@ export default function Navigation() {
 
                     {/* Mobile Dropdown Content */}
                     {openDropdown === item.title && (
-                      <div className="pl-4 space-y-1 mt-1">
-                        {item.subItems.map((subItem) => (
+                      <div className="pl-4 space-y-2 mt-1">
+                        {item.subItems.map((subItem, index) => (
                           <Link
                             key={subItem.title}
                             href={subItem.href}
                             onClick={closeMobileMenu}
-                            className="block px-3 py-2 rounded-md text-sm text-foreground hover:bg-accent hover:text-accent-foreground transition-colors"
-                          >
-                            <div className="font-medium">{subItem.title}</div>
-                            {subItem.description && (
-                              <div className="text-xs text-muted-foreground mt-0.5">
-                                {subItem.description}
-                              </div>
+                            className={cn(
+                              "block px-4 py-3 rounded-md text-base text-foreground hover:bg-accent hover:text-accent-foreground transition-colors border-b border-transparent",
+                              index === item.subItems!.length - 1 && "ring-b-0"
                             )}
+                          >
+                            <div className="flex items-center space-x-3">
+                              {subItem.title === "Testimonials" && <Star className="w-4 h-4 text-yellow-400 fill-current" />}
+                              <div className="flex-1">
+                                <div className="font-medium text-foreground">
+                                  {subItem.title}
+                                </div>
+                                {subItem.description && (
+                                  <div className="text-sm text-muted-foreground">
+                                    {subItem.description}
+                                  </div>
+                                )}
+                              </div>
+                            </div>
                           </Link>
                         ))}
                       </div>
@@ -270,7 +313,7 @@ export default function Navigation() {
                   <Link
                     href={item.href!}
                     onClick={closeMobileMenu}
-                    className="flex items-center space-x-2 px-3 py-2 rounded-md text-base font-medium text-foreground hover:bg-accent hover:text-accent-foreground transition-colors"
+                    className="flex items-center space-x-2 px-4 py-3 rounded-lg text-base font-medium text-foreground hover:bg-accent hover:text-accent-foreground transition-colors"
                   >
                     {item.icon && <span>{item.icon}</span>}
                     <span>{item.title}</span>

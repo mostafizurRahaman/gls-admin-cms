@@ -6,13 +6,14 @@ import { DataTableColumnHeader } from "@/components/data-table/column-header";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Badge } from "@/components/ui/badge";
 import { Typography } from "@/components/typography";
-import { Category, CategoryExportData } from "@/types/category";
+import { Star } from "lucide-react";
+import { TestimonialExportData } from "@/types";
 import { DataTableRowActions } from "./row-actions";
 
 export const getColumns = (
   handleRowDeselection: ((rowId: string) => void) | null | undefined
-): ColumnDef<CategoryExportData>[] => {
-  const baseColumns: ColumnDef<CategoryExportData>[] = [
+): ColumnDef<TestimonialExportData>[] => {
+  const baseColumns: ColumnDef<TestimonialExportData>[] = [
     {
       accessorKey: "name",
       header: ({ column }) => (
@@ -26,25 +27,82 @@ export const getColumns = (
       size: 200,
     },
     {
-      accessorKey: "tagline",
+      accessorKey: "message",
       header: ({ column }) => (
-        <DataTableColumnHeader column={column} title="Tagline" />
+        <DataTableColumnHeader column={column} title="Message" />
       ),
       cell: ({ row }) => {
-        const tagline = row.getValue("tagline") as string;
+        const message = row.getValue("message") as string;
         return (
-          <div className="max-w-[200px]">
-            <Typography
-              variant="Regular_H7"
-              
-              maxLines={2}
-            >
-              {tagline || "—"}
+          <div className="max-w-[300px]">
+            <Typography variant="Regular_H7" maxLines={2}>
+              {message || "—"}
             </Typography>
           </div>
         );
       },
-      size: 200,
+      size: 300,
+    },
+    {
+      accessorKey: "rating",
+      header: ({ column }) => (
+        <DataTableColumnHeader column={column} title="Rating" />
+      ),
+      cell: ({ row }) => {
+        const rating = row.getValue("rating") as number;
+        return (
+          <div className="flex items-center space-x-1">
+            <Typography variant="Regular_H7">{rating}</Typography>
+            <div className="flex">
+              {[...Array(5)].map((_, i) => (
+                <Star
+                  key={i}
+                  className={`w-3 h-3 ${
+                    i < rating
+                      ? "text-yellow-400 fill-current"
+                      : "text-gray-300"
+                  }`}
+                />
+              ))}
+            </div>
+          </div>
+        );
+      },
+      size: 100,
+    },
+    {
+      accessorKey: "position",
+      header: ({ column }) => (
+        <DataTableColumnHeader column={column} title="Position" />
+      ),
+      cell: ({ row }) => {
+        const position = row.getValue("position") as string;
+        return (
+          <div className="max-w-[150px]">
+            <Typography variant="Regular_H7" maxLines={1}>
+              {position || "—"}
+            </Typography>
+          </div>
+        );
+      },
+      size: 150,
+    },
+    {
+      accessorKey: "company",
+      header: ({ column }) => (
+        <DataTableColumnHeader column={column} title="Company" />
+      ),
+      cell: ({ row }) => {
+        const company = row.getValue("company") as string;
+        return (
+          <div className="max-w-[150px]">
+            <Typography variant="Regular_H7" maxLines={1}>
+              {company || "—"}
+            </Typography>
+          </div>
+        );
+      },
+      size: 150,
     },
     {
       accessorKey: "isActive",
@@ -62,91 +120,6 @@ export const getColumns = (
         );
       },
       size: 100,
-    },
-    {
-      accessorKey: "isPremium",
-      header: ({ column }) => (
-        <DataTableColumnHeader column={column} title="Premium" />
-      ),
-      cell: ({ row }) => {
-        const isPremium = row.getValue("isPremium") as boolean;
-        return (
-          <Badge variant={isPremium ? "default" : "outline"}>
-            <Typography variant="Regular_H7">
-              {isPremium ? "Premium" : "Standard"}
-            </Typography>
-          </Badge>
-        );
-      },
-      size: 100,
-    },
-    {
-      accessorKey: "isRepairingService",
-      header: ({ column }) => (
-        <DataTableColumnHeader column={column} title="Repair Service" />
-      ),
-      cell: ({ row }) => {
-        const isRepairingService = row.getValue(
-          "isRepairingService"
-        ) as boolean;
-        return (
-          <Badge variant={isRepairingService ? "default" : "outline"}>
-            <Typography variant="Regular_H7">
-              {isRepairingService ? "Yes" : "No"}
-            </Typography>
-          </Badge>
-        );
-      },
-      size: 120,
-    },
-    {
-      accessorKey: "isShowHome",
-      header: ({ column }) => (
-        <DataTableColumnHeader column={column} title="Show on Home" />
-      ),
-      cell: ({ row }) => {
-        const isShowHome = row.getValue("isShowHome") as boolean;
-        return (
-          <Badge variant={isShowHome ? "default" : "outline"}>
-            <Typography variant="Regular_H7">
-              {isShowHome ? "Yes" : "No"}
-            </Typography>
-          </Badge>
-        );
-      },
-      size: 120,
-    },
-    {
-      accessorKey: "sortOrder",
-      header: ({ column }) => (
-        <DataTableColumnHeader column={column} title="Order" />
-      ),
-      cell: ({ row }) => (
-        <div className="text-center">
-          <Typography variant="Regular_H7">
-            {row.getValue("sortOrder")}
-          </Typography>
-        </div>
-      ),
-      size: 80,
-      enableSorting: false,
-    },
-    {
-      accessorKey: "_count",
-      header: ({ column }) => (
-        <DataTableColumnHeader column={column} title="Services" />
-      ),
-      cell: ({ row }) => {
-        const count = row.getValue("_count") as
-          | { services: number }
-          | undefined;
-        return (
-          <div className="text-center">
-            <Typography variant="Regular_H7">{count?.services || 0}</Typography>
-          </div>
-        );
-      },
-      size: 80,
     },
     {
       accessorKey: "createdAt",

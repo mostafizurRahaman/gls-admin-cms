@@ -36,7 +36,7 @@ export const getColumns = (
           <div className="max-w-[200px]">
             <Typography
               variant="Regular_H7"
-              className="text-gray-600"
+              
               maxLines={2}
             >
               {tagline || "—"}

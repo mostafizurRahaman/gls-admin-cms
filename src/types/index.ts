@@ -10,3 +10,4 @@ export interface IUser {
 }
 export * from "./category";
 export * from "./service";
+export * from "./testimonial";

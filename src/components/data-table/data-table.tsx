@@ -63,6 +63,8 @@ interface DataFetchParams {
   to_date: string;
   sort_by: string;
   sort_order: string;
+  rating?: number;
+  isActive?: boolean;
 }
 
 interface DataFetchResult<TData> {
