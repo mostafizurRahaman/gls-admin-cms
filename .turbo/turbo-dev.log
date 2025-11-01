@@ -15,8 +15,48 @@
    - Environments: .env.local
 
  ✓ Starting...
- ✓ Ready in 5s
+ ✓ Ready in 6.7s
+ ○ Compiling /_not-found/page ...
+ ✓ Compiled /_not-found/page in 4.2s
+ GET /all-orders 404 in 4770ms
+ ✓ Compiled /favicon.ico in 267ms
+ GET /favicon.ico?favicon.0b3bf435.ico 200 in 617ms
  ○ Compiling / ...
+ ✓ Compiled / in 754ms
 { user: null }
- GET / 200 in 7269ms
- ✓ Compiled / in 7.3s
+ GET / 200 in 959ms
+ GET /favicon.ico?favicon.0b3bf435.ico 200 in 285ms
+ ○ Compiling /login ...
+ ✓ Compiled /login in 841ms
+ GET /login 200 in 922ms
+ GET /favicon.ico?favicon.0b3bf435.ico 200 in 285ms
+ GET / 200 in 79ms
+ ○ Compiling /services ...
+ ✓ Compiled /services in 1967ms
+ GET /services 200 in 2035ms
+ GET /services 200 in 72ms
+ GET /services 200 in 91ms
+ GET /services 200 in 80ms
+ GET /services 200 in 80ms
+ GET /services 200 in 116ms
+ GET /services 200 in 87ms
+{ user: null }
+ GET /services 200 in 266ms
+ GET /favicon.ico?favicon.0b3bf435.ico 200 in 280ms
+{ user: null }
+ GET / 200 in 111ms
+ GET /login 200 in 81ms
+{ user: null }
+ GET / 200 in 121ms
+ GET /login 200 in 85ms
+{ user: null }
+ GET / 200 in 147ms
+ GET /gallery 404 in 128ms
+ GET /gallery 404 in 85ms
+ GET /favicon.ico?favicon.0b3bf435.ico 200 in 278ms
+ GET /gallery 404 in 79ms
+ GET /favicon.ico?favicon.0b3bf435.ico 200 in 268ms
+ GET /gallery 404 in 76ms
+{ user: null }
+ GET / 200 in 91ms
+ GET /login 200 in 86ms
