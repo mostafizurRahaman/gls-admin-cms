@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import {
   Menu,
@@ -22,7 +22,7 @@ import { ThemeToggle } from "@/components/ui/theme-toggle";
 import { cn } from "@/lib/utils";
 import IcoLogo from "@/assets/icons/ico-logo";
 
-// Define navigation item types
+// Types
 interface SubNavItem {
   title: string;
   href: string;
@@ -95,10 +95,11 @@ const navigationItems: NavItem[] = [
 export default function Navigation() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [openDropdown, setOpenDropdown] = useState<string | null>(null);
+  const navRef = useRef<HTMLDivElement | null>(null);
 
   const toggleMobileMenu = () => {
     setIsMobileMenuOpen(!isMobileMenuOpen);
-    setOpenDropdown(null); // Close any open dropdowns when toggling mobile menu
+    setOpenDropdown(null);
   };
 
   const toggleDropdown = (title: string) => {
@@ -110,20 +111,22 @@ export default function Navigation() {
     setOpenDropdown(null);
   };
 
-  // Close dropdown when clicking outside
+  // Close dropdown on outside click
   useEffect(() => {
-    const handleClickOutside = () => {
-      setOpenDropdown(null);
-    };
-    
-    document.addEventListener('click', handleClickOutside);
-    return () => {
-      document.removeEventListener('click', handleClickOutside);
-    };
+    function handleClickOutside(event: MouseEvent) {
+      if (navRef.current && !navRef.current.contains(event.target as Node)) {
+        setOpenDropdown(null);
+      }
+    }
+    document.addEventListener("click", handleClickOutside);
+    return () => document.removeEventListener("click", handleClickOutside);
   }, []);
 
   return (
-    <nav className="bg-background border-b border-border sticky top-0 z-50 shadow-sm">
+    <nav
+      ref={navRef}
+      className="bg-background border-b border-border sticky top-0 z-50 shadow-sm"
+    >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16">
           {/* Logo */}
@@ -136,37 +139,50 @@ export default function Navigation() {
           {/* Desktop Navigation */}
           <div className="hidden md:flex md:items-center md:space-x-1">
             {navigationItems.map((item) => (
-              <div key={item.title} className="relative group">
+              <div
+                key={item.title}
+                className="relative"
+                onMouseEnter={() => setOpenDropdown(item.title)}
+                onMouseLeave={() => setOpenDropdown(null)}
+              >
                 {item.subItems ? (
-                  // Dropdown Menu
-                  <div className="relative">
+                  <>
                     <button
                       className={cn(
                         "flex items-center space-x-2 px-4 py-2.5 rounded-lg text-sm font-medium text-foreground transition-all duration-200 hover:bg-accent/50 hover:text-accent-foreground cursor-pointer",
-                        openDropdown === item.title && "bg-accent text-accent-foreground"
+                        openDropdown === item.title &&
+                          "bg-accent text-accent-foreground"
                       )}
-                      onMouseEnter={() => setOpenDropdown(item.title)}
-                      onMouseLeave={() => setOpenDropdown(null)}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        toggleDropdown(item.title);
+                      }}
                     >
                       {item.icon && <span>{item.icon}</span>}
                       <span>{item.title}</span>
-                      <ChevronDown className={`w-4 h-4 transition-transform duration-200 ${
-                        openDropdown === item.title ? "rotate-180" : ""
-                      }`} />
+                      <ChevronDown
+                        className={`w-4 h-4 transition-transform duration-200 ${
+                          openDropdown === item.title ? "rotate-180" : ""
+                        }`}
+                      />
                     </button>
 
-                    {/* Dropdown Content */}
+                    {/* Dropdown */}
                     {openDropdown === item.title && (
-                      <div className="absolute left-0 mt-2 min-w-72 rounded-lg shadow-xl bg-background border border-border animate-in fade-in-0 slide-in-from-top-5">
+                      <div
+                        className="absolute left-0 mt-2 min-w-72 rounded-lg shadow-xl bg-background border border-border"
+                        onClick={(e) => e.stopPropagation()}
+                      >
                         <div className="py-2">
                           {item.subItems.map((subItem, index) => (
                             <Link
                               key={subItem.title}
                               href={subItem.href}
                               className={cn(
-                                "block px-5 py-3 text-sm transition-all duration-200 hover:bg-accent/50 hover:text-accent-foreground border-b border-transparent hover:border-accent/50",
+                                "block px-5 py-3 text-sm hover:bg-accent/50 hover:text-accent-foreground transition-all duration-200",
                                 index === 0 && "rounded-t-lg",
-                                index === item.subItems!.length - 1 && "rounded-b-lg"
+                                index === item.subItems!.length - 1 &&
+                                  "rounded-b-lg"
                               )}
                             >
                               <div className="flex items-center space-x-3">
@@ -187,9 +203,8 @@ export default function Navigation() {
                         </div>
                       </div>
                     )}
-                  </div>
+                  </>
                 ) : (
-                  // Single Link
                   <Link
                     href={item.href!}
                     className="flex items-center space-x-2 px-4 py-2.5 rounded-lg text-sm font-medium text-foreground transition-all duration-200 hover:bg-accent/50 hover:text-accent-foreground"
@@ -202,7 +217,7 @@ export default function Navigation() {
             ))}
           </div>
 
-          {/* Right Side Actions (Desktop) */}
+          {/* Right-side actions */}
           <div className="hidden md:flex md:items-center md:space-x-2">
             <ThemeToggle />
             <Button variant="ghost" size="icon" className="relative">
@@ -214,24 +229,22 @@ export default function Navigation() {
               <Button variant="ghost" size="icon">
                 <User className="w-5 h-5" />
               </Button>
-
-              {/* User Dropdown */}
               <div className="absolute right-0 mt-2 w-48 rounded-md shadow-lg bg-background border border-border opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200">
                 <div className="py-1">
                   <Link
                     href="/profile"
-                    className="block px-4 py-2 text-sm text-foreground hover:bg-accent hover:text-accent-foreground transition-colors"
+                    className="block px-4 py-2 text-sm text-foreground hover:bg-accent"
                   >
                     Profile
                   </Link>
                   <Link
                     href="/settings"
-                    className="block px-4 py-2 text-sm text-foreground hover:bg-accent hover:text-accent-foreground transition-colors"
+                    className="block px-4 py-2 text-sm text-foreground hover:bg-accent"
                   >
                     Settings
                   </Link>
                   <hr className="my-1 border-border" />
-                  <button className="w-full text-left px-4 py-2 text-sm text-foreground hover:bg-accent hover:text-accent-foreground transition-colors flex items-center space-x-2">
+                  <button className="w-full text-left px-4 py-2 text-sm text-foreground hover:bg-accent flex items-center space-x-2">
                     <LogOut className="w-4 h-4" />
                     <span>Logout</span>
                   </button>
@@ -240,7 +253,7 @@ export default function Navigation() {
             </div>
           </div>
 
-          {/* Mobile Menu Button */}
+          {/* Mobile menu button */}
           <div className="md:hidden">
             <Button
               variant="ghost"
@@ -265,11 +278,10 @@ export default function Navigation() {
             {navigationItems.map((item) => (
               <div key={item.title}>
                 {item.subItems ? (
-                  // Dropdown in Mobile
-                  <div>
+                  <>
                     <button
                       onClick={() => toggleDropdown(item.title)}
-                      className="w-full flex items-center justify-between px-4 py-3 rounded-lg text-base font-medium text-foreground hover:bg-accent transition-colors"
+                      className="w-full flex items-center justify-between px-4 py-3 rounded-lg text-base font-medium text-foreground hover:bg-accent/50 transition-colors"
                     >
                       <div className="flex items-center space-x-3">
                         {item.icon && <span>{item.icon}</span>}
@@ -282,43 +294,29 @@ export default function Navigation() {
                       />
                     </button>
 
-                    {/* Mobile Dropdown Content */}
                     {openDropdown === item.title && (
                       <div className="pl-4 space-y-2 mt-1">
-                        {item.subItems.map((subItem, index) => (
+                        {item.subItems.map((subItem) => (
                           <Link
                             key={subItem.title}
                             href={subItem.href}
                             onClick={closeMobileMenu}
-                            className={cn(
-                              "block px-4 py-3 rounded-md text-base text-foreground hover:bg-accent hover:text-accent-foreground transition-colors border-b border-transparent",
-                              index === item.subItems!.length - 1 && "ring-b-0"
-                            )}
+                            className="block px-4 py-3 rounded-md text-base text-foreground hover:bg-accent transition-colors"
                           >
-                            <div className="flex items-center space-x-3">
-                              {subItem.title === "Testimonials" && <Star className="w-4 h-4 text-yellow-400 fill-current" />}
-                              <div className="flex-1">
-                                <div className="font-medium text-foreground">
-                                  {subItem.title}
-                                </div>
-                                {subItem.description && (
-                                  <div className="text-sm text-muted-foreground">
-                                    {subItem.description}
-                                  </div>
-                                )}
-                              </div>
-                            </div>
+                            {subItem.title === "Testimonials" && (
+                              <Star className="w-4 h-4 text-yellow-400 inline-block mr-2" />
+                            )}
+                            {subItem.title}
                           </Link>
                         ))}
                       </div>
                     )}
-                  </div>
+                  </>
                 ) : (
-                  // Single Link in Mobile
                   <Link
                     href={item.href!}
                     onClick={closeMobileMenu}
-                    className="flex items-center space-x-2 px-4 py-3 rounded-lg text-base font-medium text-foreground hover:bg-accent hover:text-accent-foreground transition-colors"
+                    className="flex items-center space-x-2 px-4 py-3 rounded-lg text-base font-medium text-foreground hover:bg-accent transition-colors"
                   >
                     {item.icon && <span>{item.icon}</span>}
                     <span>{item.title}</span>
@@ -326,8 +324,6 @@ export default function Navigation() {
                 )}
               </div>
             ))}
-
-            {/* Mobile Actions */}
             <hr className="my-2 border-border" />
             <div className="flex items-center space-x-2 px-3 py-2 rounded-md">
               <ThemeToggle />
@@ -336,7 +332,7 @@ export default function Navigation() {
             <Link
               href="/profile"
               onClick={closeMobileMenu}
-              className="flex items-center space-x-2 px-3 py-2 rounded-md text-base font-medium text-foreground hover:bg-accent hover:text-accent-foreground transition-colors"
+              className="flex items-center space-x-2 px-3 py-2 text-base hover:bg-accent rounded-md"
             >
               <User className="w-4 h-4" />
               <span>Profile</span>
@@ -344,14 +340,14 @@ export default function Navigation() {
             <Link
               href="/notifications"
               onClick={closeMobileMenu}
-              className="flex items-center space-x-2 px-3 py-2 rounded-md text-base font-medium text-foreground hover:bg-accent hover:text-accent-foreground transition-colors"
+              className="flex items-center space-x-2 px-3 py-2 text-base hover:bg-accent rounded-md"
             >
               <Bell className="w-4 h-4" />
               <span>Notifications</span>
             </Link>
             <button
               onClick={closeMobileMenu}
-              className="w-full flex items-center space-x-2 px-3 py-2 rounded-md text-base font-medium text-foreground hover:bg-accent hover:text-accent-foreground transition-colors"
+              className="w-full flex items-center space-x-2 px-3 py-2 rounded-md text-base font-medium hover:bg-accent transition-colors"
             >
               <LogOut className="w-4 h-4" />
               <span>Logout</span>

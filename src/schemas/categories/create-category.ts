@@ -45,7 +45,7 @@ export const createCategorySchema = z.object({
     .int("Sort order must be integer")
     .min(0, "Sort order must be 0 or greater")
     .optional(),
-  userId: z.string().optional().nullable(),
+  userId: z.string().optional(),
   addons: z
     .array(
       z

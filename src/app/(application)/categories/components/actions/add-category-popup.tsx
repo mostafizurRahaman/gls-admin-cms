@@ -40,12 +40,14 @@ import {
 } from "@/schemas/categories/create-category";
 import { createCategory } from "@/api/categories/create-category";
 import { CreateCategoryRequest, ImageMetadata } from "@/types/category";
+import { useGetMe } from "@/hooks";
 
 export function AddCategoryPopup() {
   const [isOpen, setIsOpen] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [addons, setAddons] = useState<string[]>([]);
   const [newAddon, setNewAddon] = useState("");
+  const { user, loading: userLoading } = useGetMe();
 
   const router = useRouter();
   const queryClient = useQueryClient();
@@ -63,7 +65,7 @@ export function AddCategoryPopup() {
       isShowHome: false,
       isActive: true,
       sortOrder: undefined,
-      userId: undefined,
+      userId: user?.id,
       addons: [],
     },
   });
@@ -142,7 +144,9 @@ export function AddCategoryPopup() {
         <DialogContent className="!max-w-7xl max-h-[90vh] overflow-y-auto">
           <DialogHeader>
             <DialogTitle className="text-foreground">
-              <Typography variant="Bold_H4" as="span">Create New Category</Typography>
+              <Typography variant="Bold_H4" as="span">
+                Create New Category
+              </Typography>
             </DialogTitle>
           </DialogHeader>
 

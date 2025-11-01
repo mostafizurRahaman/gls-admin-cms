@@ -75,7 +75,7 @@ export function EditCategoryModal({
       isShowHome: false,
       isActive: true,
       sortOrder: undefined,
-      userId: undefined,
+      userId: user?.id,
       addons: [],
     },
     mode: "onSubmit",
@@ -96,7 +96,7 @@ export function EditCategoryModal({
         isShowHome: category.isShowHome || false,
         isActive: category.isActive ?? true,
         sortOrder: category.sortOrder,
-        userId: category.userId,
+        userId: category.userId || user?.id,
         addons: category.categoryAddons?.map((addon) => addon.addonText) || [],
       };
 
