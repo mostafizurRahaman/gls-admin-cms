@@ -31,6 +31,7 @@ export function useGalleriesData(
         sortOrder: sortOrder as "asc" | "desc",
         from_date: dateRange.from_date,
         to_date: dateRange.to_date,
+        galleryCategory: undefined, // Can be filtered by URL params if needed
       });
 
       return {

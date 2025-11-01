@@ -1,9 +1,10 @@
 import { z } from "zod";
+import { galleryCategoryEnum } from "./create-gallery";
 
 export const updateGallerySchema = z
   .object({
     caption: z.string().max(255, "Caption too long").optional(),
-    categoryId: z.string().uuid("Invalid category ID").nullable().optional(),
+    galleryCategory: galleryCategoryEnum.nullable().optional(),
     isActive: z.boolean().optional(),
   })
   .refine(

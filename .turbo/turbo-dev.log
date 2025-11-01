@@ -9,54 +9,65 @@
  Detected additional lockfiles: 
    * D:\MOP\apps\admin-cms\package-lock.json
 
+ ⚠ Port 3000 is in use by process 28500, using available port 3001 instead.
    ▲ Next.js 15.5.6 (Turbopack)
-   - Local:        http://localhost:3000
-   - Network:      http://192.168.0.107:3000
+   - Local:        http://localhost:3001
+   - Network:      http://192.168.0.107:3001
    - Environments: .env.local
 
  ✓ Starting...
- ✓ Ready in 6.7s
- ○ Compiling /_not-found/page ...
- ✓ Compiled /_not-found/page in 4.2s
- GET /all-orders 404 in 4770ms
- ✓ Compiled /favicon.ico in 267ms
- GET /favicon.ico?favicon.0b3bf435.ico 200 in 617ms
- ○ Compiling / ...
- ✓ Compiled / in 754ms
+ ✓ Ready in 1623ms
+ ○ Compiling /galleries ...
+ ✓ Compiled /galleries in 3.8s
 { user: null }
- GET / 200 in 959ms
- GET /favicon.ico?favicon.0b3bf435.ico 200 in 285ms
+ GET /galleries 200 in 4385ms
+ ✓ Compiled /favicon.ico in 228ms
+ GET /favicon.ico?favicon.0b3bf435.ico 200 in 552ms
+{ user: null }
+ GET /galleries 200 in 103ms
+ GET /favicon.ico?favicon.0b3bf435.ico 200 in 286ms
  ○ Compiling /login ...
- ✓ Compiled /login in 841ms
- GET /login 200 in 922ms
- GET /favicon.ico?favicon.0b3bf435.ico 200 in 285ms
- GET / 200 in 79ms
- ○ Compiling /services ...
- ✓ Compiled /services in 1967ms
- GET /services 200 in 2035ms
- GET /services 200 in 72ms
- GET /services 200 in 91ms
- GET /services 200 in 80ms
- GET /services 200 in 80ms
- GET /services 200 in 116ms
- GET /services 200 in 87ms
-{ user: null }
- GET /services 200 in 266ms
- GET /favicon.ico?favicon.0b3bf435.ico 200 in 280ms
-{ user: null }
- GET / 200 in 111ms
- GET /login 200 in 81ms
-{ user: null }
- GET / 200 in 121ms
- GET /login 200 in 85ms
-{ user: null }
- GET / 200 in 147ms
- GET /gallery 404 in 128ms
- GET /gallery 404 in 85ms
- GET /favicon.ico?favicon.0b3bf435.ico 200 in 278ms
- GET /gallery 404 in 79ms
- GET /favicon.ico?favicon.0b3bf435.ico 200 in 268ms
- GET /gallery 404 in 76ms
-{ user: null }
- GET / 200 in 91ms
- GET /login 200 in 86ms
+ ✓ Compiled /login in 651ms
+ GET /login 200 in 732ms
+ ✓ Compiled / in 275ms
+ GET / 200 in 361ms
+ GET /galleries 200 in 80ms
+ GET /galleries 200 in 70ms
+ GET /galleries?search=Frameless%2520glass%2520shower%2520doors 200 in 72ms
+ GET /galleries?search=Frameless%2520glass%2520shower%2520doors 200 in 84ms
+ GET /galleries 200 in 96ms
+ GET /galleries 200 in 76ms
+ GET /galleries?search=modern%2520glass%2520doors 200 in 77ms
+ GET /galleries?search=modern%2520glass%2520doors 200 in 76ms
+ GET /galleries 200 in 68ms
+ GET /galleries 200 in 89ms
+ GET /galleries?search=modern%2520glass%2520balustrades 200 in 69ms
+ GET /galleries?search=modern%2520glass%2520balustrades 200 in 86ms
+ GET /galleries?search=Frameless%2520shower%2520doors 200 in 85ms
+ GET /galleries?search=Frameless%2520shower%2520doors 200 in 77ms
+ GET /galleries 200 in 65ms
+ GET /galleries 200 in 78ms
+ GET /galleries?search=modern%2520glass%2520railings 200 in 72ms
+ GET /galleries?search=modern%2520glass%2520railings 200 in 96ms
+ GET /galleries 200 in 82ms
+ GET /galleries 200 in 86ms
+ GET /galleries?search=modern%2520glass%2520balconies 200 in 71ms
+ GET /galleries?search=modern%2520glass%2520balconies 200 in 77ms
+ GET /galleries 200 in 66ms
+ GET /galleries 200 in 79ms
+ ✓ Compiled /_not-found/page in 284ms
+ GET /gallery 404 in 360ms
+ GET /gallery 404 in 110ms
+ GET /gallery 404 in 80ms
+ GET /favicon.ico?favicon.0b3bf435.ico 200 in 299ms
+ GET /gallery 404 in 72ms
+ GET /favicon.ico?favicon.0b3bf435.ico 200 in 267ms
+ GET /gallery 404 in 82ms
+ GET /gallery 404 in 84ms
+ GET /favicon.ico?favicon.0b3bf435.ico 200 in 116ms
+ GET /favicon.ico?favicon.0b3bf435.ico 200 in 120ms
+ GET /gallery 404 in 105ms
+ GET /favicon.ico?favicon.0b3bf435.ico 200 in 111ms
+ GET /gallery 404 in 96ms
+ GET /gallery 404 in 105ms
+ GET /favicon.ico?favicon.0b3bf435.ico 200 in 111ms

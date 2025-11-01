@@ -20,13 +20,16 @@ const fetchByIdsFn = async (
       id: gallery.id,
       caption: gallery.caption || "",
       isActive: gallery.isActive,
-      categoryId: gallery.categoryId || "",
+      galleryCategory: gallery.galleryCategory || null,
       imageId: gallery.imageId,
-      createdAt: gallery.createdAt ? formatDateOnly(new Date(gallery.createdAt)) : "",
-      updatedAt: gallery.updatedAt ? formatDateOnly(new Date(gallery.updatedAt)) : "",
+      createdAt: gallery.createdAt
+        ? formatDateOnly(new Date(gallery.createdAt))
+        : "",
+      updatedAt: gallery.updatedAt
+        ? formatDateOnly(new Date(gallery.updatedAt))
+        : "",
       imageUrl: gallery.image?.url || "",
       imagePublicId: gallery.image?.publicId || "",
-      categoryName: gallery.category?.name || null,
     })) || []
   );
 };

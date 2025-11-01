@@ -6,9 +6,17 @@ import { DataTableColumnHeader } from "@/components/data-table/column-header";
 import { Checkbox } from "@/components/ui/checkbox";
 import { StatusChips } from "@/components/badges/status-switcher";
 import { Typography } from "@/components/typography";
-import { Gallery, GalleryExportData } from "@/types/gallery";
+import { Gallery, GalleryExportData, GalleryCategory } from "@/types/gallery";
 import { DataTableRowActions } from "./row-actions";
 import { ImageCell } from "@/components/image-viewer";
+
+const galleryCategoryLabels: Record<GalleryCategory, string> = {
+  SHOWER_ENCLOSURES: "Shower Enclosures",
+  GLASS_DOORS: "Glass doors",
+  RAILINGS: "Railings",
+  WINDOWS: "Windows",
+  UPVC: "UPVC",
+};
 
 export const getColumns = (
   handleRowDeselection: ((rowId: string) => void) | null | undefined
@@ -29,16 +37,20 @@ export const getColumns = (
       size: 200,
     },
     {
-      accessorKey: "categoryName",
+      accessorKey: "galleryCategory",
       header: ({ column }) => (
         <DataTableColumnHeader column={column} title="Category" />
       ),
       cell: ({ row }) => {
-        const categoryName = row.original.category?.name as unknown as string;
+        const galleryCategory = row.original
+          .galleryCategory as GalleryCategory | null;
+        const displayLabel = galleryCategory
+          ? galleryCategoryLabels[galleryCategory]
+          : "—";
         return (
           <div className="max-w-[150px]">
             <Typography variant="Regular_H7" maxLines={2}>
-              {categoryName || "—"}
+              {displayLabel}
             </Typography>
           </div>
         );

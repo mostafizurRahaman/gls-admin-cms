@@ -36,11 +36,19 @@ import {
   UpdateGalleryType,
 } from "@/schemas/gallery/update-gallery";
 import { updateGallery } from "@/api/gallery";
-import { Gallery, UpdateGalleryRequest } from "@/types/gallery";
+import {
+  Gallery,
+  UpdateGalleryRequest,
+  GalleryCategory,
+} from "@/types/gallery";
 import { getGalleryDetails } from "@/api/gallery";
-import { AsyncSearchableSelect } from "@/components/async-searchable-select";
-import { getAllCategories } from "@/api/categories";
-import { preprocessSearch } from "@/components/data-table/utils";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 interface EditGalleryModalProps {
   open: boolean;
@@ -61,31 +69,19 @@ export function EditGalleryPopup({
   const router = useRouter();
   const queryClient = useQueryClient();
 
-  // Create fetch function for categories
-  const fetchCategories = async (searchQuery?: string) => {
-    const response = await getAllCategories({
-      page: 1,
-      limit: 100,
-      search: searchQuery ? preprocessSearch(searchQuery) : "",
-      sortBy: "name",
-      sortOrder: "asc",
-      isActive: true, // Only active categories
-    });
-
-    return {
-      data: response.data.map((category: { id: string; name: string }) => ({
-        value: category.id,
-        label: category.name,
-      })),
-      success: response.success,
-    };
-  };
+  const galleryCategoryOptions: { value: GalleryCategory; label: string }[] = [
+    { value: "SHOWER_ENCLOSURES", label: "Shower Enclosures" },
+    { value: "GLASS_DOORS", label: "Glass doors" },
+    { value: "RAILINGS", label: "Railings" },
+    { value: "WINDOWS", label: "Windows" },
+    { value: "UPVC", label: "UPVC" },
+  ];
 
   const form = useForm<UpdateGalleryType>({
     resolver: zodResolver(updateGallerySchema),
     defaultValues: {
       caption: "",
-      categoryId: "",
+      galleryCategory: undefined,
       isActive: true,
     },
   });
@@ -100,7 +96,7 @@ export function EditGalleryPopup({
             const galleryData = response.data.gallery;
             form.reset({
               caption: galleryData.caption || "",
-              categoryId: galleryData.categoryId || "",
+              galleryCategory: galleryData.galleryCategory || undefined,
               isActive: galleryData.isActive,
             });
           }
@@ -124,7 +120,7 @@ export function EditGalleryPopup({
     try {
       const submitData: UpdateGalleryRequest = {
         caption: data.caption,
-        categoryId: data.categoryId === "" ? null : data.categoryId,
+        galleryCategory: data.galleryCategory,
         isActive: data.isActive,
       };
 
@@ -200,24 +196,36 @@ export function EditGalleryPopup({
 
                 <FormField
                   control={form.control}
-                  name="categoryId"
+                  name="galleryCategory"
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel className="text-foreground">
                         Category
                       </FormLabel>
                       <FormControl>
-                        <AsyncSearchableSelect
-                          placeholder="Select a category..."
-                          searchPlaceholder="Search categories..."
+                        <Select
                           value={field.value || ""}
                           onValueChange={(value) => {
-                            field.onChange(value === "" ? "" : value);
+                            field.onChange(
+                              value === "" ? null : (value as GalleryCategory)
+                            );
                           }}
                           disabled={isSubmitting}
-                          fetchOptions={fetchCategories}
-                          className="w-full"
-                        />
+                        >
+                          <SelectTrigger className="w-full">
+                            <SelectValue placeholder="Select a category..." />
+                          </SelectTrigger>
+                          <SelectContent>
+                            {galleryCategoryOptions.map((option) => (
+                              <SelectItem
+                                key={option.value}
+                                value={option.value}
+                              >
+                                {option.label}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
                       </FormControl>
 
                       <FormMessage className="text-destructive" />

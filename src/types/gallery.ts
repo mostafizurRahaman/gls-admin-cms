@@ -1,4 +1,11 @@
 // TypeScript types for Gallery entity
+export type GalleryCategory =
+  | "SHOWER_ENCLOSURES"
+  | "GLASS_DOORS"
+  | "RAILINGS"
+  | "WINDOWS"
+  | "UPVC";
+
 export interface ImageMetadata {
   id?: string;
   url: string;
@@ -15,18 +22,13 @@ export interface Gallery {
   id: string;
   caption?: string;
   isActive: boolean;
-  categoryId?: string;
+  galleryCategory?: GalleryCategory;
   imageId: string;
   createdAt: Date;
   updatedAt: Date;
 
   // Relations
   image?: ImageMetadata;
-  category?: {
-    id: string;
-    name: string;
-    tagline?: string;
-  };
 }
 
 // Flattened type for export (only primitive types)
@@ -34,13 +36,12 @@ export type GalleryExportData = {
   id: string;
   caption: string | null;
   isActive: boolean;
-  categoryId: string | null;
+  galleryCategory: GalleryCategory | null;
   imageId: string;
   createdAt: string;
   updatedAt: string;
   imageUrl: string;
   imagePublicId: string;
-  categoryName: string | null;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   [key: string]: any;
 };
@@ -90,7 +91,7 @@ export interface GalleryBulkExportResponse {
 
 // Request types
 export interface CreateGalleryRequest {
-  categoryId?: string;
+  galleryCategory?: GalleryCategory;
   image: ImageMetadata;
   caption?: string;
   isActive?: boolean;
@@ -98,14 +99,14 @@ export interface CreateGalleryRequest {
 
 export interface UpdateGalleryRequest {
   caption?: string;
-  categoryId?: string | null;
+  galleryCategory?: GalleryCategory | null;
   isActive?: boolean;
 }
 
 export interface GetAllGalleriesRequest {
   page?: number;
   limit?: number;
-  categoryId?: string;
+  galleryCategory?: GalleryCategory;
   search?: string;
   isActive?: boolean;
   sortBy?: "createdAt" | "caption";
@@ -124,7 +125,7 @@ export interface DeleteGalleryResponse {
   data: {
     id: string;
     caption?: string;
-    categoryName?: string;
+    galleryCategory?: GalleryCategory;
     deletedImageId?: string;
     cloudinaryDeletion?: {
       type: string;
@@ -138,7 +139,7 @@ export interface DeleteGalleryResponse {
 
 export interface GetGalleriesForBulkExportRequest {
   ids?: string[];
-  categoryId?: string;
+  galleryCategory?: GalleryCategory;
   isActive?: boolean;
   limit?: number;
 }

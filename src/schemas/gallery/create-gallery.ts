@@ -1,6 +1,14 @@
 import { z } from "zod";
 import { ImageMetadata } from "@/types/gallery";
 
+export const galleryCategoryEnum = z.enum([
+  "SHOWER_ENCLOSURES",
+  "GLASS_DOORS",
+  "RAILINGS",
+  "WINDOWS",
+  "UPVC",
+]);
+
 export const createGallerySchema = z.object({
   caption: z
     .string()
@@ -18,7 +26,7 @@ export const createGallerySchema = z.object({
     size: z.number().int().positive().optional(),
   }),
   isActive: z.boolean().default(true),
-  categoryId: z.string().uuid("Invalid category ID format").optional(),
+  galleryCategory: galleryCategoryEnum.optional(),
 });
 
 export type CreateGalleryType = z.infer<typeof createGallerySchema>;

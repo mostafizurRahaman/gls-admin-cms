@@ -1,6 +1,11 @@
 import axiosInstance, { ApiErrorResponse } from "@/configs/axios";
 import { AxiosError } from "axios";
-import { GalleryBulkExportResponse, GetGalleriesForBulkExportRequest, GalleriesResponse, Gallery } from "@/types";
+import {
+  GalleryBulkExportResponse,
+  GetGalleriesForBulkExportRequest,
+  GalleriesResponse,
+  Gallery,
+} from "@/types";
 import { toast } from "sonner";
 
 /**
@@ -9,7 +14,7 @@ import { toast } from "sonner";
 export async function getGalleriesForBulkExport(
   params: GetGalleriesForBulkExportRequest = {}
 ): Promise<GalleryBulkExportResponse> {
-  const { ids, categoryId, isActive, limit = 100 } = params;
+  const { ids, galleryCategory, isActive, limit = 100 } = params;
 
   if (!ids || ids.length === 0) {
     toast.error("No galleries selected for export");
@@ -26,7 +31,8 @@ export async function getGalleriesForBulkExport(
       const queryParams = new URLSearchParams();
       queryParams.append("ids", ids.join(","));
 
-      if (categoryId) queryParams.append("categoryId", categoryId);
+      if (galleryCategory)
+        queryParams.append("galleryCategory", galleryCategory);
       if (isActive !== undefined)
         queryParams.append("isActive", isActive.toString());
       queryParams.append("limit", limit.toString());
@@ -38,13 +44,16 @@ export async function getGalleriesForBulkExport(
       return response.data;
     } catch (bulkExportError) {
       // If bulk export doesn't exist, fallback to regular getAllGalleries
-      console.warn("Bulk export endpoint not found, falling back to regular API");
-      
+      console.warn(
+        "Bulk export endpoint not found, falling back to regular API"
+      );
+
       const queryParams = new URLSearchParams();
       queryParams.append("page", "1");
       queryParams.append("limit", ids.length.toString());
-      
-      if (categoryId) queryParams.append("category", categoryId);
+
+      if (galleryCategory)
+        queryParams.append("galleryCategory", galleryCategory);
       if (isActive !== undefined)
         queryParams.append("isActive", isActive.toString());
 
@@ -53,8 +62,8 @@ export async function getGalleriesForBulkExport(
       );
 
       // Filter by selected IDs if needed
-      const filteredData = response.data.data.gallery.filter((gallery: Gallery) => 
-        ids.includes(gallery.id)
+      const filteredData = response.data.data.gallery.filter(
+        (gallery: Gallery) => ids.includes(gallery.id)
       );
 
       return {
@@ -83,5 +92,3 @@ export async function getGalleriesForBulkExport(
     }
   }
 }
-
-

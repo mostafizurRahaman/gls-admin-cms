@@ -11,7 +11,7 @@ export async function getAllGalleries(
   const {
     page = 1,
     limit = 10,
-    categoryId,
+    galleryCategory,
     search,
     isActive = undefined,
     sortBy = "createdAt",
@@ -23,7 +23,7 @@ export async function getAllGalleries(
     queryParams.append("page", page.toString());
     queryParams.append("limit", limit.toString());
 
-    if (categoryId) queryParams.append("category", categoryId);
+    if (galleryCategory) queryParams.append("galleryCategory", galleryCategory);
     if (search) queryParams.append("search", search);
     if (isActive !== undefined)
       queryParams.append("isActive", isActive.toString());
