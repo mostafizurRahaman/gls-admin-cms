@@ -8,6 +8,7 @@ import { deleteCloudinaryImage } from "@/api/upload/delete-image";
 
 // ✅ Image metadata interface
 export interface ImageMetadata {
+  id?: string;
   publicId?: string;
   folder?: string;
   altText?: string;
