@@ -2,25 +2,20 @@
 
 import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import {
   Menu,
   X,
   ChevronDown,
   Settings,
-  Users,
   FileText,
   Star,
-  LayoutDashboard,
   Bell,
-  HelpCircle,
   LogOut,
   User,
   ChevronRight,
   Home,
-  Package,
   MessagesSquare,
-  Sparkles,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { ThemeToggle } from "@/components/ui/theme-toggle";
@@ -35,6 +30,9 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { cn } from "@/lib/utils";
 import IcoLogo from "@/assets/icons/ico-logo";
+import { useGetMe } from "@/hooks/useGetMe";
+import { logout } from "@/api/auth/logout";
+import { toast } from "sonner";
 
 // Types
 interface SubNavItem {
@@ -109,10 +107,21 @@ const navigationItems: NavItem[] = [
 
 export default function Navigation() {
   const pathname = usePathname();
+  const router = useRouter();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [openDropdown, setOpenDropdown] = useState<string | null>(null);
   const navRef = useRef<HTMLDivElement | null>(null);
   const [notificationCount] = useState(3); // Mock notification count
+
+  // Fetch user data
+  const { user } = useGetMe();
+
+  // Handle logout
+  const handleLogout = () => {
+    logout();
+    toast.success("Logged out successfully");
+    router.push("/login");
+  };
 
   const toggleMobileMenu = () => {
     setIsMobileMenuOpen(!isMobileMenuOpen);
@@ -236,7 +245,7 @@ export default function Navigation() {
                             )}
                           </div>
                           {subItem.title === "Testimonials" && (
-                            <Star className="h-4 w-4 text-yellow-500" />
+                            <Star className="h-4 w-4 text-primary fill-primary" />
                           )}
                         </Link>
                       </DropdownMenuItem>
@@ -318,24 +327,44 @@ export default function Navigation() {
             <DropdownMenuTrigger asChild>
               <Button variant="ghost" className="relative h-9 w-9 rounded-full">
                 <Avatar className="h-9 w-9">
-                  <AvatarImage src="/avatars/user.jpg" alt="User" />
-                  <AvatarFallback className="bg-gradient-to-br from-blue-500 to-purple-600 text-white font-medium">
-                    <User className="h-4 w-4" />
+                  <AvatarImage
+                    src={user?.profileUrl || "/avatars/user.jpg"}
+                    alt={user?.name || "User"}
+                  />
+                  <AvatarFallback className="bg-primary text-primary-foreground font-medium">
+                    {user?.name ? (
+                      user.name
+                        .split(" ")
+                        .map((n) => n[0])
+                        .join("")
+                        .toUpperCase()
+                        .slice(0, 2)
+                    ) : (
+                      <User className="h-4 w-4" />
+                    )}
                   </AvatarFallback>
                 </Avatar>
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end" className="w-64">
               <div className="px-4 py-2">
-                <div className="font-semibold">Admin User</div>
-                <div className="text-sm text-muted-foreground">
-                  admin@example.com
+                <div className="font-semibold">
+                  {user?.name || "Loading..."}
                 </div>
-                <div className="mt-1">
-                  <Badge variant="secondary" className="text-xs">
-                    Super Admin
-                  </Badge>
+                <div className="text-sm text-muted-foreground line-clamp-1">
+                  {user?.email || "..."}
                 </div>
+                {user?.role && (
+                  <div className="mt-1">
+                    <Badge variant="secondary" className="text-xs">
+                      {user.role === "superadmin"
+                        ? "Super Admin"
+                        : user.role === "admin"
+                          ? "Admin"
+                          : "User"}
+                    </Badge>
+                  </div>
+                )}
               </div>
               <DropdownMenuSeparator />
               <DropdownMenuItem asChild>
@@ -351,7 +380,10 @@ export default function Navigation() {
                 </Link>
               </DropdownMenuItem>
               <DropdownMenuSeparator />
-              <DropdownMenuItem className="cursor-pointer text-red-600 focus:text-red-600">
+              <DropdownMenuItem
+                className="cursor-pointer text-destructive focus:text-destructive"
+                onClick={handleLogout}
+              >
                 <LogOut className="mr-2 h-4 w-4" />
                 Log out
               </DropdownMenuItem>
@@ -372,8 +404,9 @@ export default function Navigation() {
                       <button
                         onClick={() => toggleDropdown(item.title)}
                         className={cn(
-                          "w-full flex items-center justify-between gap-3 px-4 py-3 rounded-lg text-base font-medium text-foreground hover:bg-accent/50 transition-all",
-                          openDropdown === item.title && "bg-accent/50"
+                          "w-full flex items-center justify-between gap-3 px-4 py-3 rounded-lg text-base font-medium text-foreground hover:bg-accent hover:text-accent-foreground transition-all",
+                          openDropdown === item.title &&
+                            "bg-accent text-accent-foreground"
                         )}
                       >
                         <div className="flex items-center gap-3">
@@ -397,12 +430,13 @@ export default function Navigation() {
                               href={subItem.href}
                               onClick={closeMobileMenu}
                               className={cn(
-                                "flex items-center gap-3 px-4 py-3 rounded-md text-sm text-foreground hover:bg-accent/50 transition-all",
-                                pathname === subItem.href && "bg-accent/50"
+                                "flex items-center gap-3 px-4 py-3 rounded-md text-sm text-foreground hover:bg-accent hover:text-accent-foreground transition-all",
+                                pathname === subItem.href &&
+                                  "bg-accent text-accent-foreground"
                               )}
                             >
                               {subItem.title === "Testimonials" && (
-                                <Star className="h-4 w-4 text-yellow-500" />
+                                <Star className="h-4 w-4 text-primary fill-primary" />
                               )}
                               <div className="flex-1">
                                 <div className="font-medium">
@@ -424,8 +458,9 @@ export default function Navigation() {
                       href={item.href!}
                       onClick={closeMobileMenu}
                       className={cn(
-                        "flex items-center gap-3 px-4 py-3 rounded-lg text-base font-medium text-foreground hover:bg-accent/50 transition-all",
-                        pathname === item.href && "bg-accent/50"
+                        "flex items-center gap-3 px-4 py-3 rounded-lg text-base font-medium text-foreground hover:bg-accent hover:text-accent-foreground transition-all",
+                        pathname === item.href &&
+                          "bg-accent text-accent-foreground"
                       )}
                     >
                       {item.icon && (
@@ -439,10 +474,27 @@ export default function Navigation() {
             </div>
 
             <div className="mt-6 pt-4 border-t border-border/40 space-y-3">
+              <div className="px-4 py-2 border-b border-border/40">
+                <div className="font-semibold text-sm">
+                  {user?.name || "Loading..."}
+                </div>
+                <div className="text-xs text-muted-foreground">
+                  {user?.email || "..."}
+                </div>
+                {user?.role && (
+                  <Badge variant="secondary" className="mt-1 text-xs">
+                    {user.role === "superadmin"
+                      ? "Super Admin"
+                      : user.role === "admin"
+                        ? "Admin"
+                        : "User"}
+                  </Badge>
+                )}
+              </div>
               <Link
                 href="/profile"
                 onClick={closeMobileMenu}
-                className="flex items-center gap-3 px-4 py-3 rounded-md text-base hover:bg-accent/50 transition-all"
+                className="flex items-center gap-3 px-4 py-3 rounded-md text-base hover:bg-accent hover:text-accent-foreground transition-all"
               >
                 <User className="h-4 w-4" />
                 <span>Profile</span>
@@ -450,7 +502,7 @@ export default function Navigation() {
               <Link
                 href="/notifications"
                 onClick={closeMobileMenu}
-                className="flex items-center gap-3 px-4 py-3 rounded-md text-base hover:bg-accent/50 transition-all"
+                className="flex items-center gap-3 px-4 py-3 rounded-md text-base hover:bg-accent hover:text-accent-foreground transition-all"
               >
                 <div className="relative">
                   <Bell className="h-4 w-4" />
@@ -466,8 +518,11 @@ export default function Navigation() {
                 <span>Notifications</span>
               </Link>
               <button
-                onClick={closeMobileMenu}
-                className="w-full flex items-center gap-3 px-4 py-3 rounded-md text-base font-medium text-red-600 hover:bg-accent/50 transition-all"
+                onClick={() => {
+                  closeMobileMenu();
+                  handleLogout();
+                }}
+                className="w-full flex items-center gap-3 px-4 py-3 rounded-md text-base font-medium text-destructive hover:bg-accent transition-all"
               >
                 <LogOut className="h-4 w-4" />
                 <span>Log out</span>
