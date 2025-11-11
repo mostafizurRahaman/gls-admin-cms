@@ -44,6 +44,9 @@ export function SettingsForm() {
     defaultValues: {
       siteTitle: "",
       siteDescription: "",
+      logoImage: undefined,
+      faviconImage: undefined,
+      metaImage: undefined,
       contactEmail: "",
       contactPhone: "",
       contactWhatsApp: "",
@@ -59,6 +62,10 @@ export function SettingsForm() {
       seoMetaDescription: "",
       seoKeywords: "",
       isActive: true,
+      businessHours: {
+      openingText: "",
+      closeText: "",
+    },
     },
   });
 
@@ -87,6 +94,10 @@ export function SettingsForm() {
             seoMetaDescription: data.seoMetaDescription || "",
             seoKeywords: data.seoKeywords || "",
             isActive: data.isActive,
+            businessHours: {
+              openingText: data.businessHours?.openingText || "",
+              closeText: data.businessHours?.closeText || "",
+            },
             logoImage: data.logoImage
               ? {
                   url: data.logoImage.url,
@@ -130,6 +141,8 @@ export function SettingsForm() {
   }, [form]);
 
   const onSubmit = async (data: UpdateSettingsType) => {
+    console.log("Form submitted with data:", data);
+    console.log("Form errors:", form.formState.errors);
     setIsSubmitting(true);
     try {
       const submitData: UpdateSettingsRequest = {
@@ -145,6 +158,7 @@ export function SettingsForm() {
         seoMetaDescription: data.seoMetaDescription,
         seoKeywords: data.seoKeywords,
         isActive: data.isActive,
+        businessHours: data.businessHours,
         logoImage: data.logoImage
           ? {
               url: data.logoImage.url,
@@ -657,6 +671,59 @@ export function SettingsForm() {
               </div>
             </div>
 
+            {/* Business Hours */}
+            <div className="space-y-6">
+              <div className="space-y-2">
+                <Typography variant="Bold_H5">Business Hours</Typography>
+                <Separator />
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <FormField
+                  control={form.control}
+                  name="businessHours.openingText"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Opening Hours</FormLabel>
+                      <FormControl>
+                        <Textarea
+                          placeholder="e.g., Monday - Friday: 9:00 AM - 6:00 PM"
+                          className="min-h-[100px] resize-none"
+                          disabled={isSubmitting}
+                          {...field}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="businessHours.closeText"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Closed Hours</FormLabel>
+                      <FormControl>
+                        <Textarea
+                          placeholder="e.g., Saturday & Sunday: Closed"
+                          className="min-h-[100px] resize-none"
+                          disabled={isSubmitting}
+                          {...field}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
+
+              <div className="text-sm text-muted-foreground">
+                <Typography variant="Regular_H7">
+                  Enter your business hours. Opening text for when you're open, and closing text for when you're closed.
+                </Typography>
+              </div>
+            </div>
+
             {/* Active Status */}
             <FormField
               control={form.control}
@@ -678,7 +745,25 @@ export function SettingsForm() {
             />
 
             <div className="flex justify-end gap-2">
-              <Button type="submit" disabled={isSubmitting}>
+              <Button 
+                type="button" 
+                variant="outline"
+                onClick={() => {
+                  console.log("Current form values:", form.getValues());
+                  console.log("Form errors:", form.formState.errors);
+                  console.log("Form is valid:", form.formState.isValid);
+                }}
+              >
+                Debug Form
+              </Button>
+              <Button 
+                type="submit" 
+                disabled={isSubmitting}
+                onClick={() => {
+                  console.log("Submit button clicked");
+                  console.log("Form errors before submit:", form.formState.errors);
+                }}
+              >
                 {isSubmitting && (
                   <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                 )}

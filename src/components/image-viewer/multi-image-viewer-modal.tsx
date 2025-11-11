@@ -52,17 +52,6 @@ export const MultiImageViewerModal = ({
       <DialogContent className="w-full !max-w-6xl p-0 gap-0 max-h-[95vh] overflow-hidden">
         {/* Header with Controls */}
         <div className="absolute top-4 right-4 z-20 flex items-center gap-2">
-          {showDownload && (
-            <Button
-              variant="ghost"
-              size="icon"
-              onClick={handleDownload}
-              className="h-10 w-10 rounded-full bg-white/90 hover:bg-white shadow-lg"
-              title="Download current image"
-            >
-              <Download className="h-5 w-5" />
-            </Button>
-          )}
           <DialogClose asChild>
             <Button
               variant="ghost"

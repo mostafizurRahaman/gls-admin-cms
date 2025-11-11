@@ -38,7 +38,7 @@ export const updateSettingsSchema = z.object({
       .int({ message: createErrorMessages.number })
       .positive({ message: createErrorMessages.positive })
       .optional(),
-  }),
+  }).optional(),
   faviconImage: z.object({
     url: z.string().url({ message: createErrorMessages.url }),
     publicId: z.string().min(1, { message: createErrorMessages.required("image public ID") }),
@@ -57,7 +57,7 @@ export const updateSettingsSchema = z.object({
       .int({ message: createErrorMessages.number })
       .positive({ message: createErrorMessages.positive })
       .optional(),
-  }),
+  }).optional(),
   metaImage: z.object({
     url: z.string().url({ message: createErrorMessages.url }),
     publicId: z.string().min(1, { message: createErrorMessages.required("image public ID") }),
@@ -76,7 +76,7 @@ export const updateSettingsSchema = z.object({
       .int({ message: createErrorMessages.number })
       .positive({ message: createErrorMessages.positive })
       .optional(),
-  }),
+  }).optional(),
   contactEmail: z.string()
     .trim()
     .min(1, { message: createErrorMessages.required("email address") })
@@ -86,31 +86,35 @@ export const updateSettingsSchema = z.object({
     .min(1, { message: createErrorMessages.required("phone number") }),
   contactWhatsApp: z.string()
     .trim()
-    .min(1, { message: createErrorMessages.required("WhatsApp number") }),
+    .optional(),
   officeAddress: z.string()
     .trim()
     .min(1, { message: createErrorMessages.required("office address") }),
   googleMapEmbedCode: z.string()
     .trim()
-    .min(1, { message: createErrorMessages.required("Google map embed code") }),
+    .optional(),
   socialMediaLinks: z.object({
     facebook: z.string()
       .trim()
-      .url({ message: createErrorMessages.url }),
+      .url({ message: createErrorMessages.url })
+      .or(z.literal("")),
     twitter: z.string()
       .trim()
-      .url({ message: createErrorMessages.url }),
+      .url({ message: createErrorMessages.url })
+      .or(z.literal("")),
     linkedin: z.string()
       .trim()
-      .url({ message: createErrorMessages.url }),
+      .url({ message: createErrorMessages.url })
+      .or(z.literal("")),
     instagram: z.string()
       .trim()
-      .url({ message: createErrorMessages.url }),
+      .url({ message: createErrorMessages.url })
+      .or(z.literal("")),
   }),
-  businessHours: z.record(z.string(), z.string()).refine(
-    (data) => Object.keys(data).length > 0,
-    { message: createErrorMessages.required("business hours") }
-  ),
+  businessHours: z.object({
+    openingText: z.string().optional(),
+    closeText: z.string().optional(),
+  }).optional(),
   seoMetaTitle: z.string()
     .trim()
     .min(1, { message: createErrorMessages.required("SEO meta title") })
