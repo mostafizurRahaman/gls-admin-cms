@@ -62,7 +62,7 @@ export async function getGalleriesForBulkExport(
       );
 
       // Filter by selected IDs if needed
-      const filteredData = response.data.data.gallery.filter(
+      const filteredData = response.data.data.filter(
         (gallery: Gallery) => ids.includes(gallery.id)
       );
 

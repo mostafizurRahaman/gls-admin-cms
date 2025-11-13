@@ -6,9 +6,14 @@ export const updateContactUsStatusParamsSchema = z.object({
 
 export const updateContactUsStatusBodySchema = z.object({
   status: z.enum(["pending", "in-progress", "resolved", "closed"], {
-    errorMap: () => ({ message: "Invalid status. Must be pending, in-progress, resolved, or closed" }),
+    message:
+      "Invalid status. Must be pending, in-progress, resolved, or closed",
   }),
 });
 
-export type UpdateContactUsStatusParamsType = z.infer<typeof updateContactUsStatusParamsSchema>;
-export type UpdateContactUsStatusBodyType = z.infer<typeof updateContactUsStatusBodySchema>;
+export type UpdateContactUsStatusParamsType = z.infer<
+  typeof updateContactUsStatusParamsSchema
+>;
+export type UpdateContactUsStatusBodyType = z.infer<
+  typeof updateContactUsStatusBodySchema
+>;
