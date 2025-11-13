@@ -23,6 +23,7 @@ import {
   FormField,
   FormItem,
   FormLabel,
+  FormMessage,
 } from "@/components/ui/form";
 import { Button } from "@/components/ui/button";
 import { Alert, AlertDescription } from "@/components/ui/alert";
@@ -198,7 +199,7 @@ export function SwapCategoryPopup({
                                 {category.name}
                               </Typography>
                               <Typography
-                                variant="Regular_H8"
+                                variant="Regular_H7"
                                 className="text-muted-foreground"
                               >
                                 (Order: {category.sortOrder})
@@ -241,7 +242,7 @@ export function SwapCategoryPopup({
                                 {category.name}
                               </Typography>
                               <Typography
-                                variant="Regular_H8"
+                                variant="Regular_H7"
                                 className="text-muted-foreground"
                               >
                                 (Order: {category.sortOrder})
@@ -266,7 +267,7 @@ export function SwapCategoryPopup({
                 <div className="grid grid-cols-2 gap-2">
                   <div className="rounded-lg border border-border p-3 bg-card">
                     <Typography
-                      variant="Regular_H8"
+                      variant="Regular_H7"
                       className="text-muted-foreground"
                     >
                       {selectedCategory1.name}
@@ -277,7 +278,7 @@ export function SwapCategoryPopup({
                   </div>
                   <div className="rounded-lg border border-border p-3 bg-card">
                     <Typography
-                      variant="Regular_H8"
+                      variant="Regular_H7"
                       className="text-muted-foreground"
                     >
                       {selectedCategory2.name}

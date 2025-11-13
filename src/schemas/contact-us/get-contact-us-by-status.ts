@@ -18,7 +18,8 @@ const ALLOWED_STATUSES = [
 
 export const getContactUsByStatusParamsSchema = z.object({
   status: z.enum(ALLOWED_STATUSES, {
-    errorMap: () => ({ message: "Invalid status. Must be pending, in-progress, resolved, or closed" }),
+    message:
+      "Invalid status. Must be pending, in-progress, resolved, or closed",
   }),
   page: z.coerce.number().int().positive().default(1),
   limit: z.coerce
@@ -31,4 +32,6 @@ export const getContactUsByStatusParamsSchema = z.object({
   sortOrder: z.enum(["asc", "desc"]).default("desc"),
 });
 
-export type GetContactUsByStatusParamsType = z.infer<typeof getContactUsByStatusParamsSchema>;
+export type GetContactUsByStatusParamsType = z.infer<
+  typeof getContactUsByStatusParamsSchema
+>;

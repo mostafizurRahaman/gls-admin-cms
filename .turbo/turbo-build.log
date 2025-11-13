@@ -2,3 +2,52 @@
 > admin-cms@0.1.0 build
 > next build --turbopack
 
+   ▲ Next.js 15.5.6 (Turbopack)
+   - Environments: .env.local
+
+   Creating an optimized production build ...
+ ✓ Finished writing to disk in 437ms
+ ✓ Compiled successfully in 10.5s
+   Skipping linting
+   Checking validity of types ...
+   Collecting page data ...
+   Generating static pages (0/14) ...
+{ user: null }
+{ user: null }
+{ user: null }
+{ user: null }
+{ user: null }
+   Generating static pages (3/14) 
+   Generating static pages (6/14) 
+{ user: null }
+{ user: null }
+{ user: null }
+{ user: null }
+   Generating static pages (10/14) 
+ ✓ Generating static pages (14/14)
+   Finalizing page optimization ...
+   Collecting build traces ...
+
+Route (app)                         Size  First Load JS
+┌ ○ /                             112 kB         333 kB
+├ ○ /_not-found                      0 B         135 kB
+├ ○ /about                       11.2 kB         307 kB
+├ ○ /categories                  8.24 kB         506 kB
+├ ○ /contact-us                  18.1 kB         499 kB
+├ ○ /galleries                   7.78 kB         505 kB
+├ ○ /login                        104 kB         260 kB
+├ ○ /services                    10.7 kB         508 kB
+├ ○ /settings                      16 kB         311 kB
+├ ○ /sliders                     13.8 kB         504 kB
+└ ○ /testimonials                9.61 kB         507 kB
++ First Load JS shared by all     152 kB
+  ├ chunks/111c2078ff56494a.js   59.2 kB
+  ├ chunks/6ec1b18a4264a945.js   20.6 kB
+  ├ chunks/ad485e1ef0aa584e.js   17.2 kB
+  ├ chunks/c412a7866df29e16.js   10.8 kB
+  ├ chunks/84661ce00deaeda7.css  16.4 kB
+  └ other shared chunks (total)  27.9 kB
+
+
+○  (Static)  prerendered as static content
+
